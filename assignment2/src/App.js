@@ -13,6 +13,10 @@ function App() {
     purpose: ''
   });
 
+  const [isImageModalOpen, setImageModalOpen] = useState(false);
+  const [isPasswordModalOpen, setPasswordModalOpen] = useState(false);
+  const [isNameModalOpen, setNameModalOpen] = useState(false);
+
     const facilities = {
     gymreserv: {
       name: 'Gym',
@@ -247,20 +251,64 @@ function App() {
           <div id="profile_Image">
             <img src="AssignImages/user.png" alt="Profile" width="300" height="300" />
           </div>
-          <button>Change Image</button>
+          <button onClick={() => setImageModalOpen(true)}>Change Image</button>
 
           <p>Email: abc@stonybrook.edu</p>
 
           <div id="password">
             <p>Password: *****</p>
           </div>
-            <button>Change Password</button>
+            <button onClick={() => setPasswordModalOpen(true)}>Change Password</button>
 
           <div id="user_Name">
             <p>Name: Nahyun Kim</p>
           </div>
-            <button>Change Name</button>
-          
+            <button onClick={() => setNameModalOpen(true)}>Change Name</button>
+        </div>
+      )}
+
+      {/* Chang Image Modal */}
+      {isImageModalOpen && (
+        <div id="imageModal" className="modal" style={{ display: 'flex' }}>
+          <div className="modal_body">
+            <h2>Change your image</h2>
+            <hr />
+            <p>New Image</p>
+            <input type="file" id="upload-image" accept="image/*" />
+            <hr />
+            <button id="closeBtn"  onClick={() => setImageModalOpen(false)}>Close</button>
+            <button id="ImageSaveBtn">Save changes</button>
+          </div>
+        </div>
+      )}
+
+      {/* Chang password Modal */}
+      {isPasswordModalOpen && (
+        <div id="passwordModal" className="modal" style={{ display: 'flex' }}>
+          <div className="modal_body">
+            <h2>Change your password</h2>
+            <hr />
+            <p>New Password</p>
+            <input type="password" id="password" value="******" />
+            <hr />
+            <button id="closeBtn"  onClick={() => setPasswordModalOpen(false)}>Close</button>
+            <button id="PasswordSaveBtn">Save changes</button>
+          </div>
+        </div>
+      )}
+
+      {/* Chang Name Modal */}
+      {isNameModalOpen && (
+        <div id="nameModal" className="modal" style={{ display: 'flex' }}>
+          <div className="modal_body">
+            <h2>Change your name</h2>
+            <hr />
+            <p>New Name</p>
+            <input type="name" id="name" value="" />
+            <hr />
+            <button id="closeBtn" onClick={() => setNameModalOpen(false)}>Close</button>
+            <button id="NameSaveBtn">Save changes</button>
+          </div>
         </div>
       )}
 

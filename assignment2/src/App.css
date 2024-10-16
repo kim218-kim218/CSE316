@@ -220,6 +220,7 @@ nav .ProfileIcon {
   border: 2px solid black;
 }
 
+
 #myInfo p,
 #myInfo label,
 #myInfo input {
@@ -271,18 +272,19 @@ hr {
 }
 
 #ImageSaveBtn,
-#PasswordSaveBtn {
+#PasswordSaveBtn,
+#NameSaveBtn {
   padding: 10px 20px;
   border: none;
   background-color: rgb(24, 130, 243);
   color: white;
 }
 
-#ImageCloseBtn,
-#PasswordCloseBtn {
+#closeBtn {
   padding: 10px 20px;
-  border: none;
-  background-color: rgb(154, 154, 154);
+  margin-right: 10px;
+  border:  none;
+  background-color: rgb(122, 122, 122);
   color: white;
 }
 

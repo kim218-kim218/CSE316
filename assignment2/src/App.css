@@ -1,38 +1,310 @@
-.App {
-  text-align: center;
+* {
+  margin: 0;
+  padding: 0;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+  min-height: 100vh;
+  background-color: rgb(202, 232, 198);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+
+nav {
+  padding: 10px 0;
+}
+
+.navContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+nav ul {
+  width: 70%;
+  display: flex;
+  list-style-type: none;
+  background-color: black;
+  align-items: center;
+}
+
+nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+nav a {
+  height: 100%;
+  padding: 0 30px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  color: black;
+  padding: 10px 20px;
+}
+
+nav a:hover {
+  background-color: rgb(214, 214, 214);
+  color: black;
+}
+
+nav .HomeIcon {
+  margin-right: auto;
+}
+
+nav .ProfileIcon {
+  margin-left: auto;
+}
+
+#home {
+  text-align: left;
+  padding-left: 100px;
+  padding-top: 100px;
+}
+
+#home li {
+  font-size: 20px;
+  margin: 20px;
+  padding-left: 10px;
+}
+
+#home ol {
+  padding-left: 30px;
+}
+
+#home p {
+  padding-left: 30px;
+}
+
+.sidebar {
+  position: fixed;
+  display: none;
+  top: 50;
+  right: 0;
+  width: 180px;
+  z-index: 999;
+  background-color: black;
+  backdrop-filter: blur(10px);
+  box-shadow: -10px 0 10px rgba(0, 0, 0, 0.1);
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.MenuNav {
+  position: fixed;
+  display: none;
+  flex-direction: column;
+  background-color: black;
+  width: 50%;
+  top: 60px;
+  left: 25%;
+}
+
+
+.MenuNav li {
+  list-style-type: none;
+  margin: 10px 0;
+  /* 각 메뉴 항목 사이에 여백 추가 */
+}
+
+@media(max-width: 600px) {
+
+  .hideOnMobile,
+  .ProfileIcon {
+    display: none;
+  }
+
+  .Hamburger {
+    display: flex;
+  }
+
+  .F_type {
+    width: 100% !important;
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+@media(min-width: 600px) {
+
+  .Hamburger,
+  .MenuNav li {
+    display: none;
+  }
+}
+
+/* Facility List */
+#F_list ul {
   display: flex;
-  flex-direction: column;
+  text-align: left;
+  padding-top: 50px;
+  flex-wrap: wrap;
+  padding-left: 20px;
+  padding-right: 20px;
+  gap: 20px;
+}
+
+
+.F_type {
+  display: grid;
+  width: calc(50% - 20px);
+  ;
+  padding: 10px;
+  box-sizing: border-box;
+  background-color: white;
+  border-radius: 10px;
+
+}
+
+.F_type img {
+  width: 100%;
+  /* 이미지가 카드 너비에 맞게 */
+  height: auto;
+  /* 이미지 비율 유지 */
+  border-bottom: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.img {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.F_info {
+  margin-left: 10px;
+  padding-top: 10px;
+  font-size: 80%;
+}
+
+#reservForm {
+  padding-top: 20px;
+  padding-left: 20px;
+}
+
+.checklist {
+  display: block;
+  margin-bottom: 20px;
+}
+
+#selectedF_img {
+  width: 50%;
+  border-radius: 10px;
+  height: 50%;
+}
+
+#selectedFinfo {
+  margin: 10px;
+}
+
+#selectedF {
+  display: flex;
+  flex-direction: row;
+  padding-top: 50px;
+  padding-bottom: 30px;
+}
+
+#myInfo {
+  display: block;
   align-items: center;
+  flex-direction: column;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+
+#myInfo img {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+#myInfo button {
+  margin-bottom: 15px;
+}
+
+#myInfo p,
+#myInfo label,
+#myInfo input {
+  margin-bottom: 15px;
+}
+
+button:hover {
+  background-color: black;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+button {
+  padding: 7px 10px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.modal {
+  position: absolute;
+  display: none;
+
+  justify-content: center;
+  top: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal_body {
+  position: absolute;
+  top: 20%;
+
+  width: 300px;
+  height: 200px;
+  padding: 40px;
+
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 20px 0;
+  width: 100%;
+}
+
+#ImageSaveBtn,
+#PasswordSaveBtn {
+  padding: 10px 20px;
+  border: none;
+  background-color: rgb(24, 130, 243);
+  color: white;
+}
+
+#ImageCloseBtn,
+#PasswordCloseBtn {
+  padding: 10px 20px;
+  border: none;
+  background-color: rgb(154, 154, 154);
+  color: white;
+}
+
+#myReserv {
+  display: flex;
+  flex-direction: column;
+}
+
+.reservedFacility {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  padding-left: 30px;
+  padding-top: 30px;
+}
+
+.reservedImg {
+  width: 40%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.reservedInfo {
+  margin-left: 10%;
 }

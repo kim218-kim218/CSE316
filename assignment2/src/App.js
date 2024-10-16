@@ -240,8 +240,26 @@ function App() {
         </div>
       )}
 
+      {/* My page -> My information */}
       {currentPage == 'myInfo' && (
         <div id="myInfo" className="page">
+          <h1>User Information</h1>
+          <div id="profile_Image">
+            <img src="AssignImages/user.png" alt="Profile" width="300" height="300" />
+          </div>
+          <button>Change Image</button>
+
+          <p>Email: abc@stonybrook.edu</p>
+
+          <div id="password">
+            <p>Password: *****</p>
+          </div>
+            <button>Change Password</button>
+
+          <div id="user_Name">
+            <p>Name: Nahyun Kim</p>
+          </div>
+            <button>Change Name</button>
           
         </div>
       )}

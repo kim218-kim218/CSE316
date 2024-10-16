@@ -204,10 +204,9 @@ nav .ProfileIcon {
 }
 
 #myInfo {
-  display: block;
+  display: flex;
   align-items: center;
   flex-direction: column;
-  justify-content: center;
 }
 
 #myInfo img {
@@ -217,6 +216,8 @@ nav .ProfileIcon {
 
 #myInfo button {
   margin-bottom: 15px;
+  background-color: rgb(202, 232, 198);
+  border: 2px solid black;
 }
 
 #myInfo p,
@@ -226,7 +227,7 @@ nav .ProfileIcon {
 }
 
 button:hover {
-  background-color: black;
+  background-color: black !important;
   color: white;
 }
 

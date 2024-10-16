@@ -5,7 +5,72 @@ import './App.css';
 function App() {
 
   const [currentPage, setCurrentPage] = useState('home');
+  const [selectedFacility, setSelectedFacility] = useState('gymreserv');
+  const [formData, setFormData] = useState({
+    date: '',
+    people: 0,
+    affiliation: '',
+    purpose: ''
+  });
 
+    const facilities = {
+    gymreserv: {
+      name: 'Gym',
+      description: 'sports hall',
+      days: 'Mon, Tue, Wed, Thu, Fri, Sat, Sun',
+      groupSize: '1-5',
+      location: 'C1033',
+      available: 'Available to all',
+      img: 'AssignImages/gym.jpg',
+    },
+    auditoriumreserv: {
+      name: 'Auditorium',
+      description: 'The Auditorium Theater',
+      days :        ' Mon, Tue, Wed, Thu ',
+      groupSize: '10-30',
+      location: 'A234',
+      available: 'Available to all',
+      img: 'AssignImages/auditorium.jpg',
+    },
+    poolreserv: {
+      name: 'Swimming Pool',
+      description: 'aquatic center',
+      days: 'Sun, Sat',
+      groupSize: '1-8',
+      location: 'C1033',
+      available: 'Available to all',
+      img: 'AssignImages/pool.jpg',
+    },
+    seminarreserv: {
+      name: 'Seminar Room',
+      description: 'lecture hall',
+      days: 'Mon, Wed, Fri',
+      groupSize: '10-30',
+      location: 'C1033',
+      available: 'Available to all',
+      img: 'AssignImages/seminar.jpg',
+    },
+    conferencereserv: {
+      name: 'Conference Room',
+      description: 'meeting space',
+      days: 'Mon, Tue, Wed, Thu, Fri',
+      groupSize: '1-10',
+      location: 'C1033',
+      available: 'Only for SUNY Korea',
+      img: 'AssignImages/conference.jpg',
+    },
+    libraryreserv: {
+      name: 'Library',
+      description: 'study and read books',
+      days: ' Mon, Tue, Wed, Thu, Fri, Sat, Sun',
+      groupSize: '1-20',
+      location: 'C1033',
+      available: 'Only for SUNY Korea',
+      img: 'AssignImages/library.jpg',
+    }
+  };
+
+  //Change page
   function showPage(page){
     setCurrentPage(page);
     const menunav = document.querySelector('.MenuNav');
@@ -14,7 +79,8 @@ function App() {
     }
   };
 
-    function showSidebar(id,event){
+  //When click My Page -> show sidebar
+  function showSidebar(id,event){
     console.log("showSidebar");
     const sidebar = document.querySelector('.sidebar');
     const Button = document.getElementById(id);
@@ -39,7 +105,6 @@ function App() {
         // if resize or click -> hide sidebar
         document.addEventListener('click', hideSidebar);
         window.addEventListener('resize', hideSidebar);
-        // 이벤트가 버블링되어 문서에 전파되지 않도록 중지
         event.stopPropagation();
     }
   }
@@ -148,9 +213,24 @@ function App() {
         </div>
       )}
 
+      {/* Facility List Page */}
       {currentPage == 'F_list' && (
         <div id="F_list" className="page">
-
+          <ul>
+          {Object.values(facilities).map((facility) => (
+            <div className="F_type" key={facility.name}>
+              <img src={facility.img} alt={facility.name} />
+              <div className="F_info">
+                <h2>{facility.name}</h2>
+                <p>{facility.description}</p>
+                <p>📅 {facility.days}</p>
+                <p>👥 {facility.groupSize}</p>
+                <p>📍 {facility.location}</p>
+                <p>⚠️ {facility.available}</p>
+              </div>
+            </div>
+          ))}
+          </ul>
         </div>
       )}
 

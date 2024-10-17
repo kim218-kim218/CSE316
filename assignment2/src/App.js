@@ -93,6 +93,7 @@ function App() {
     if(menunav.style.display=='flex'){
         menunav.style.display = 'none';
     }
+    displayReservations();
   };
 
   //When click My Page -> show sidebar
@@ -231,6 +232,7 @@ function App() {
     localStorage.setItem('reservStorage', JSON.stringify(reservStorage));// Save form data in localStorage
     setReservations(reservStorage);
     alert('Reservation successful!');
+    displayReservations();
 
     return true;
   };
@@ -255,6 +257,39 @@ function App() {
     const d = (q + Math.floor((13 * (m + 1)) / 5) + k + Math.floor(k / 4) + Math.floor(j / 4) + (5*j)) % 7;
 
     return d; 
+  }
+
+  function  displayReservations(){
+    if(reservations.length==0){
+      return <p className="no-reservation">No Reservation Yet</p>;
+    }
+    else{
+      return reservations.map((reservation,idx)=>{
+        const dateOnly = new Date(reservation.reservationDate).toISOString().split('T')[0]; 
+        return (
+        <div key={idx} className="reservedFacility">
+          <img className="reservedImg" src={reservation.img} alt={reservation.facilityName} />
+          <div className="reservedInfo">
+            <h2>{reservation.facilityName}</h2>
+            <p>Purpose: {reservation.comment}</p>
+            <p>
+              📅 {dateOnly}
+            </p>
+            <p>
+              👥 {reservation.peopleCount}
+            </p>
+            <p>
+              📍 {reservation.roomNumber}
+            </p>
+            <p>
+              ⚠️ {reservation.affiliation}
+            </p>
+            <button >Cancel</button> {/* 취소 버튼 추가 */}
+          </div>
+        </div>
+      );
+      }
+    )}
   }
 
   return (
@@ -462,7 +497,7 @@ function App() {
 
       {currentPage =='myReserv' && (
         <div id="myReserv" className="page">
-          
+          {displayReservations()}
         </div>
       )}
     </div>

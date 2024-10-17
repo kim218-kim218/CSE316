@@ -22,55 +22,67 @@ function App() {
       name: 'Gym',
       description: 'sports hall',
       days: 'Mon, Tue, Wed, Thu, Fri, Sat, Sun',
-      groupSize: '1-5',
+      daysArray: [0,1,2,3,4,5,6],
+      groupSize: [1,5],
       location: 'C1033',
       available: 'Available to all',
       img: 'AssignImages/gym.jpg',
+      lock: false
     },
     auditoriumreserv: {
       name: 'Auditorium',
       description: 'The Auditorium Theater',
       days :        ' Mon, Tue, Wed, Thu ',
-      groupSize: '10-30',
+      daysArray:[2,3,4,5],
+      groupSize: [10,30],
       location: 'A234',
       available: 'Available to all',
       img: 'AssignImages/auditorium.jpg',
+      lock: false
     },
     poolreserv: {
       name: 'Swimming Pool',
       description: 'aquatic center',
       days: 'Sun, Sat',
-      groupSize: '1-8',
+      daysArray:[0,1],
+      groupSize: [1,8],
       location: 'C1033',
       available: 'Available to all',
       img: 'AssignImages/pool.jpg',
+      lock: false
     },
     seminarreserv: {
       name: 'Seminar Room',
       description: 'lecture hall',
       days: 'Mon, Wed, Fri',
-      groupSize: '10-30',
+      daysArray:[2,4,6],
+      groupSize: [10,30],
       location: 'C1033',
       available: 'Available to all',
       img: 'AssignImages/seminar.jpg',
+      lock: false
     },
     conferencereserv: {
       name: 'Conference Room',
       description: 'meeting space',
       days: 'Mon, Tue, Wed, Thu, Fri',
-      groupSize: '1-10',
+      daysArray: [2,3,4,5,6],
+      groupSize: [1,10],
       location: 'C1033',
       available: 'Only for SUNY Korea',
       img: 'AssignImages/conference.jpg',
+      lock: true
     },
     libraryreserv: {
       name: 'Library',
       description: 'study and read books',
       days: ' Mon, Tue, Wed, Thu, Fri, Sat, Sun',
-      groupSize: '1-20',
+      daysArray: [0,1,2,3,4,5,6],
+      groupSize: [1,20],
       location: 'C1033',
       available: 'Only for SUNY Korea',
       img: 'AssignImages/library.jpg',
+      lock: true
     }
   };
 
@@ -166,8 +178,83 @@ function App() {
     setSelectedFacility(e.target.value);
   };
 
+  const [reservations, setReservations] = useState([]);
   function reserveFacility(){
+    let reservStorage = JSON.parse(localStorage.getItem('reservStorage')) || [];
+    const facility = document.getElementById('facility').value;
+    const facilityData = facilities[facility];
+
+    const selectedDate = new Date(document.getElementById('date').value);
+    const today = new Date();
+    const peopleNum = parseInt(document.getElementById('people').value);
+    const affiliationInput = document.querySelector('input[name="affiliation"]:checked');
     
+    if(affiliationInput==null){
+      alert('Cannot reserve. Please fill the all blank');
+      return false
+    }
+    const affiliation=affiliationInput.value;
+    console.log(affiliation);
+
+    if (selectedDate < today.setHours(0, 0, 0, 0)) {
+        alert('Cannot reserve. The selected date is in the past.');
+        return false;
+    }
+    const dayOfWeek = getDay(selectedDate);
+    console.log("요일:"+dayOfWeek);
+    if(!facilityData.daysArray.includes(dayOfWeek)){
+      alert('Cannot reserve. The selected date is not available.');
+        return false;
+    }
+    if (peopleNum > facilityData.groupSize[1] || peopleNum < facilityData.groupSize[0]) {
+        alert('Cannot reserve. The number of people exceeds the capacity.');
+        return false;
+    }
+    if (facilityData.lock && affiliation == 'no') {
+        alert('Cannot reserve. This facility is only available for SUNY Korea members.');
+        return false;
+    }
+
+    const reservForm = {
+        img: facilityData.img,
+        facilityName: facilityData.name,
+        comment: document.getElementById('purpose').value,
+        reservationDate: selectedDate,
+        peopleCount: peopleNum.toString(),
+        roomNumber: facilityData.location,
+        affiliation: facilityData.available
+    };
+
+    console.log(facilityData.img,facilityData.name,document.getElementById('purpose').value,selectedDate,peopleNum.toString(),facilityData.location,facilityData.available);
+
+    reservStorage.push(reservForm);
+    localStorage.setItem('reservStorage', JSON.stringify(reservStorage));// Save form data in localStorage
+    setReservations(reservStorage);
+    alert('Reservation successful!');
+
+    return true;
+  };
+
+  function getDay(date) {
+    const q = date.getDate();           // the day (1~31)
+    let m = date.getMonth() + 1;        // the month (1~12)
+    console.log(m+"월"+q+"일");
+    let year = date.getFullYear();      // the year (YYYY)
+    
+    if (m == 1 || m == 2) {
+      m += 12;
+      year -= 1;
+    }
+
+    const j = Math.floor(year / 100);  // first two digits of the year
+    console.log(j);
+    const k = year % 100;  // last two digits of the year
+    console.log(k);
+
+    // cpompute days
+    const d = (q + Math.floor((13 * (m + 1)) / 5) + k + Math.floor(k / 4) + Math.floor(j / 4) + (5*j)) % 7;
+
+    return d; 
   }
 
   return (
@@ -271,7 +358,7 @@ function App() {
                 <h2>{currentFacility.name}</h2>
                 <p>{currentFacility.description}</p>
                 <p>📅 {currentFacility.days}</p>
-                <p>👥 {currentFacility.groupSize}</p>
+                <p>👥 {currentFacility.groupSize[0]+'-'+currentFacility.groupSize[1]}</p>
                 <p>📍 {currentFacility.location}</p>
                 <p>⚠️ {currentFacility.available}</p>
               </div>

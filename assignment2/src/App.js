@@ -155,6 +155,21 @@ function App() {
     }
   }
 
+  const currentFacility = facilities[selectedFacility];
+
+  function handleInputChange(e){
+    const { id, value } = e.target;
+    setFormData({ ...formData, [id]: value });
+  };
+
+  function updateFacilityInfo(e){
+    setSelectedFacility(e.target.value);
+  };
+
+  function reserveFacility(){
+    
+  }
+
   return (
     <div className="App">
       <nav >
@@ -240,7 +255,53 @@ function App() {
 
       {currentPage == 'F_reserv' && (
         <div id="F_reserv" className="page">
-          
+          <form id="reservForm">
+            <label htmlFor="facility">Select Facility:</label>
+            <select id="facility" value={selectedFacility} onChange={updateFacilityInfo}>
+              {Object.keys(facilities).map((facility) => (
+                <option key={facility} value={facility}>
+                  {facilities[facility].name}
+                </option>
+              ))}
+            </select>
+
+            <div id="selectedF">
+              <img id="selectedF_img" src={currentFacility.img} alt="Facility" />
+              <div id="selectedFinfo">
+                <h2>{currentFacility.name}</h2>
+                <p>{currentFacility.description}</p>
+                <p>📅 {currentFacility.days}</p>
+                <p>👥 {currentFacility.groupSize}</p>
+                <p>📍 {currentFacility.location}</p>
+                <p>⚠️ {currentFacility.available}</p>
+              </div>
+            </div>
+
+            <div className="checklist">
+              <label htmlFor="date">Date to be Used:</label>
+              <input type="date" id="date" value={formData.date} onChange={handleInputChange} />
+            </div>
+
+            <div className="checklist">
+              <label htmlFor="people">Number of People:</label>
+              <input type="number" id="people" value={formData.people} onChange={handleInputChange} />
+            </div>
+
+            <div className="checklist">
+              <label>Are you affiliated with SUNY Korea?</label>
+              <input type="radio" id="affiliated" name="affiliation" value="yes" onChange={handleInputChange} />
+              <label htmlFor="yes">Yes</label>
+              <input type="radio" id="affiliated" name="affiliation" value="no" onChange={handleInputChange} />
+              <label htmlFor="no">No</label>
+            </div>
+
+            <div className="checklist">
+              <label htmlFor="purpose">Purpose of Use:</label>
+              <textarea id="purpose" value={formData.purpose} onChange={handleInputChange}></textarea>
+            </div>
+
+            <button type="button" onClick={reserveFacility}>Reserve</button>
+          </form>
         </div>
       )}
 

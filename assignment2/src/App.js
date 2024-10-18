@@ -180,6 +180,7 @@ function App() {
   };
 
   const [reservations, setReservations] = useState([]);
+  
   function reserveFacility(){
     let reservStorage = JSON.parse(localStorage.getItem('reservStorage')) || [];
     const facility = document.getElementById('facility').value;
@@ -260,11 +261,13 @@ function App() {
   }
 
   function  displayReservations(){
-    if(reservations.length==0){
+    let reservationss = JSON.parse(localStorage.getItem('reservStorage')) || [];
+    if(reservationss.length==0){
+      console.log("empty??");
       return <p className="no-reservation">No Reservation Yet</p>;
     }
     else{
-      return reservations.map((reservation,idx)=>{
+      return reservationss.map((reservation,idx)=>{
         const dateOnly = new Date(reservation.reservationDate).toISOString().split('T')[0]; 
         return (
         <div key={idx} className="reservedFacility">
@@ -284,13 +287,27 @@ function App() {
             <p>
               ⚠️ {reservation.affiliation}
             </p>
-            <button >Cancel</button> {/* 취소 버튼 추가 */}
+            <button onClick={() => cancelReservation(idx)}>Cancel</button> {/* 취소 버튼 추가 */}
           </div>
         </div>
       );
       }
     )}
   }
+
+  const cancelReservation = (index) => {
+  // copy current reservations
+  let updatedReservations = [...reservations];
+
+  // remove reservation which placed in 'index'
+  updatedReservations.splice(index, 1);
+
+  // update localStorage 
+  localStorage.setItem('reservStorage', JSON.stringify(updatedReservations));
+
+  // set changed updated reservation on the list of reservation
+  setReservations(updatedReservations);
+};
 
   return (
     <div className="App">

@@ -266,7 +266,7 @@ function App() {
     let myReservations = JSON.parse(localStorage.getItem('reservStorage')) || [];
     if(myReservations.length==0){
       //console.log("empty??");
-      return <p className="no-reservation">No Reservation Yet</p>;
+      return <p  className="no-reservation">No Reservation Yet</p>;
     }
     else{
       return myReservations.map((reservation,idx)=>{
@@ -343,33 +343,33 @@ function App() {
     {currentPage == 'home' && (
         <div id="home" className="page">
           <ul>
-          <h1>Facility Reservation</h1>
-          <ul>
-          <li style ={{fontSize:'25px'}}><strong>Facility List</strong></li>
-          <ol>
-            <li> Reservation Date should be the date after today</li>
-            <li> The number of users should be between the maximum and minimum number of people</li>
-            <li> If the facility is available only for SUNY Korea, user should be in SUNY Korea</li>
-            <li> The reservation date must be made on the available day of the week</li>
-            <li> The same person cannot book another facility on the same date</li>
-          </ol>
-            <p>If all conditions are met, data is stored in local storage.</p>
+            <li style ={{fontSize:'25px'}}><strong>Facility Reservation</strong></li>
+              <ul className="homeUL">
+              <li>Facility List</li>
+              <ol>
+                <li> Reservation Date should be the date after today</li>
+                <li> The number of users should be between the maximum and minimum number of people</li>
+                <li> If the facility is available only for SUNY Korea, user should be in SUNY Korea</li>
+                <li> The reservation date must be made on the available day of the week</li>
+                <li> The same person cannot book another facility on the same date</li>
+              </ol>
+                <p>If all conditions are met, data is stored in local storage.</p>
 
-          <li style ={{fontSize:'25px'}}><strong>User Information</strong></li>
-          <ol>
-            <li> User profile, user email, user password, user name</li>
-            <li> All other details can be modified except for the user email</li>
-            <li> If the user profile is changed, the image in the navbar will also change</li>
-          </ol>
+              <li>User Information</li>
+              <ol>
+                <li> User profile, user email, user password, user name</li>
+                <li> All other details can be modified except for the user email</li>
+                <li> If the user profile is changed, the image in the navbar will also change</li>
+              </ol>
 
-          <li style ={{fontSize:'25px'}}><strong>Reservation History</strong></li>
-          <ul>
-            <p>Load the reservation data stored in the local storage:</p>
-            <p>Reservation ID, facility name, purpose, peopleNum, isSUNY, booker name, date</p>
-            <p>Can cancel reservation</p>
+              <li>Reservation History</li>
+              <ul>
+                <p>Load the reservation data stored in the local storage:</p>
+                <p>Reservation ID, facility name, purpose, peopleNum, isSUNY, booker name, date</p>
+                <p>Can cancel reservation</p>
+              </ul>
+            </ul>
           </ul>
-        </ul>
-        </ul>
         </div>
       )}
 
@@ -454,7 +454,7 @@ function App() {
         <div id="myInfo" className="page">
           <h1>User Information</h1>
           <div id="profile_Image">
-            <img src="AssignImages/user.png" alt="Profile" width="300" height="300" />
+            <img src="AssignImages/user.png" alt="Profile" width="200" height="200" />
           </div>
           <button onClick={() => setImageModalOpen(true)}>Change Image</button>
 

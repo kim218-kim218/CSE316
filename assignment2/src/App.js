@@ -242,7 +242,7 @@ function App() {
   function getDay(date) {
     const q = date.getDate();           // the day (1~31)
     let m = date.getMonth() + 1;        // the month (1~12)
-    console.log(m+"월"+q+"일");
+    //console.log(m+"월"+q+"일");
     let year = date.getFullYear();      // the year (YYYY)
     
     if (m == 1 || m == 2) {
@@ -298,17 +298,17 @@ function App() {
   }
 
   const cancelReservation = (index) => {
-  // copy current reservations
-  let updatedReservations = [...reservations];
+    // bring recent reservations from localStorage
+    let myReservations = JSON.parse(localStorage.getItem('reservStorage')) || [];
 
-  // remove reservation which placed in 'index'
-  updatedReservations.splice(index, 1);
+    // remove reservation which placed in 'index'
+    myReservations.splice(index, 1);
 
-  // update localStorage 
-  localStorage.setItem('reservStorage', JSON.stringify(updatedReservations));
+    // update localStorage 
+    localStorage.setItem('reservStorage', JSON.stringify(myReservations));
 
-  // set changed updated reservation on the list of reservation
-  setReservations(updatedReservations);
+    // set changed updated reservation on the list of reservation
+    setReservations(myReservations);
 };
 
   return (

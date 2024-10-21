@@ -196,20 +196,20 @@ function App() {
       return false
     }
     const affiliation=affiliationInput.value;
-    console.log(affiliation);
+    //console.log(affiliation);
 
     if (selectedDate < today.setHours(0, 0, 0, 0)) {
         alert('Cannot reserve. The selected date is in the past.');
         return false;
     }
     const dayOfWeek = getDay(selectedDate);
-    console.log("요일:"+dayOfWeek);
+    //console.log("day:"+dayOfWeek);
     if(!facilityData.daysArray.includes(dayOfWeek)){
       alert('Cannot reserve. The selected date is not available.');
         return false;
     }
     if (peopleNum > facilityData.groupSize[1] || peopleNum < facilityData.groupSize[0]) {
-        alert('Cannot reserve. The number of people exceeds the capacity.');
+        alert('Cannot reserve. The number of people is not correct.');
         return false;
     }
     if (facilityData.lock && affiliation == 'no') {
@@ -217,6 +217,7 @@ function App() {
         return false;
     }
 
+    //Form for localStorage
     const reservForm = {
         img: facilityData.img,
         facilityName: facilityData.name,
@@ -227,7 +228,7 @@ function App() {
         affiliation: facilityData.available
     };
 
-    console.log(facilityData.img,facilityData.name,document.getElementById('purpose').value,selectedDate,peopleNum.toString(),facilityData.location,facilityData.available);
+    //console.log(facilityData.img,facilityData.name,document.getElementById('purpose').value,selectedDate,peopleNum.toString(),facilityData.location,facilityData.available);
 
     reservStorage.push(reservForm);
     localStorage.setItem('reservStorage', JSON.stringify(reservStorage));// Save form data in localStorage
@@ -260,21 +261,22 @@ function App() {
     return d; 
   }
 
+  //Function for my Reservation page. Run this func->show what facility is reserved and save in localStorage
   function  displayReservations(){
-    let reservationss = JSON.parse(localStorage.getItem('reservStorage')) || [];
-    if(reservationss.length==0){
-      console.log("empty??");
+    let myReservations = JSON.parse(localStorage.getItem('reservStorage')) || [];
+    if(myReservations.length==0){
+      //console.log("empty??");
       return <p className="no-reservation">No Reservation Yet</p>;
     }
     else{
-      return reservationss.map((reservation,idx)=>{
+      return myReservations.map((reservation,idx)=>{
         const dateOnly = new Date(reservation.reservationDate).toISOString().split('T')[0]; 
         return (
         <div key={idx} className="reservedFacility">
           <img className="reservedImg" src={reservation.img} alt={reservation.facilityName} />
           <div className="reservedInfo">
             <h2>{reservation.facilityName}</h2>
-            <p>Purpose: {reservation.comment}</p>
+            <p>📝 {reservation.comment}</p>
             <p>
               📅 {dateOnly}
             </p>
@@ -317,7 +319,7 @@ function App() {
           <li className="HomeIcon"><a href="#" onClick={() => showPage('home')}>Home</a></li>
           <li className="hideOnMobile"><a href="#" onClick={() => showPage('F_list')}>Facility List</a></li>
           <li className="hideOnMobile"><a href="#" onClick={() => showPage('F_reserv')}>Facility Reservation</a></li>
-          <li className="hideOnMobile"><a href="#" id="myPageBtn" onClick={(e) => showSidebar('myPageBtn',e)}>My Page</a></li>
+          <li className="hideOnMobile"><a href="#" id="myPageBtn" onClick={(e) => showSidebar('myPageBtn',e)}>User 🔽</a></li>
           <li className="ProfileIcon"><a href="#"><img src="AssignImages/user.png" alt="Profile Icon"  width="40" height="40" /></a></li>
           <li className="Hamburger"><a href="#" onClick={(e) => showMenu(e)}><img src="AssignImages/Menu.png" alt="Hambuger" width="30" height="30" /></a></li>
         </ul>
@@ -392,6 +394,7 @@ function App() {
         </div>
       )}
 
+      {/* Facility Reservation Page */}
       {currentPage == 'F_reserv' && (
         <div id="F_reserv" className="page">
           <form id="reservForm">
@@ -416,26 +419,28 @@ function App() {
               </div>
             </div>
 
-            <div className="checklist">
               <label htmlFor="date">Date to be Used:</label>
+            <div className="checklist">
               <input type="date" id="date" value={formData.date} onChange={handleInputChange} />
             </div>
 
-            <div className="checklist">
+            
               <label htmlFor="people">Number of People:</label>
+            <div className="checklist">
               <input type="number" id="people" value={formData.people} onChange={handleInputChange} />
             </div>
 
-            <div className="checklist">
+            
               <label>Are you affiliated with SUNY Korea?</label>
+            <div className="checklist">
               <input type="radio" id="affiliated" name="affiliation" value="yes" onChange={handleInputChange} />
-              <label htmlFor="yes">Yes</label>
+              <label htmlFor="yes">SUNY Korea</label>
               <input type="radio" id="affiliated" name="affiliation" value="no" onChange={handleInputChange} />
-              <label htmlFor="no">No</label>
+              <label htmlFor="no">NON-SUNY Korea</label>
             </div>
 
-            <div className="checklist">
               <label htmlFor="purpose">Purpose of Use:</label>
+            <div className="checklist">
               <textarea id="purpose" value={formData.purpose} onChange={handleInputChange}></textarea>
             </div>
 
@@ -513,7 +518,7 @@ function App() {
       )}
 
       {currentPage =='myReserv' && (
-        <div id="myReserv" className="page">
+        <div id="myReserv" className="page myReserv">
           {displayReservations()}
         </div>
       )}

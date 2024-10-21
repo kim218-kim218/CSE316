@@ -21,7 +21,7 @@ nav {
 }
 
 nav ul {
-  width: 70%;
+  width: 90%;
   display: flex;
   list-style-type: none;
   background-color: black;
@@ -60,7 +60,6 @@ nav .ProfileIcon {
 #home {
   text-align: left;
   padding-left: 100px;
-  padding-top: 100px;
 }
 
 #home li {
@@ -137,10 +136,9 @@ nav .ProfileIcon {
 #F_list ul {
   display: flex;
   text-align: left;
-  padding-top: 50px;
   flex-wrap: wrap;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 100px;
+  padding-right: 100px;
   gap: 20px;
 }
 
@@ -148,7 +146,6 @@ nav .ProfileIcon {
 .F_type {
   display: grid;
   width: calc(50% - 20px);
-  ;
   padding: 10px;
   box-sizing: border-box;
   background-color: white;
@@ -177,8 +174,8 @@ nav .ProfileIcon {
 }
 
 #reservForm {
-  padding-top: 20px;
-  padding-left: 20px;
+  padding-left: 70px;
+  padding-right: 70px;
 }
 
 .checklist {
@@ -190,10 +187,12 @@ nav .ProfileIcon {
   width: 50%;
   border-radius: 10px;
   height: 50%;
+  min-height: 180px;
 }
 
 #selectedFinfo {
   margin: 10px;
+  padding-top: 10px;
 }
 
 #selectedF {
@@ -202,6 +201,15 @@ nav .ProfileIcon {
   padding-top: 50px;
   padding-bottom: 30px;
 }
+
+input[type="text"],
+input[type="date"],
+input[type="number"],
+textarea,
+select {
+  width: 70%;
+}
+
 
 #myInfo {
   display: flex;
@@ -288,26 +296,68 @@ hr {
   color: white;
 }
 
-#myReserv {
+/* #myReserv {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  width: 80%;
+  margin: 20px auto;
+} */
+
+.reservedInfo {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 30%;
 }
+
+.reservedInfo h2 {
+  margin: 0 0 10px 0;
+  font-size: 24px;
+}
+
+.reservedInfo p {
+  margin: 5px 0;
+  display: flex;
+  align-items: center;
+}
+
+.reservedInfo button {
+  background-color: transparent;
+  border: 1px solid red;
+  color: red;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.reservedInfo button:hover {
+  background-color: red;
+  color: white;
+}
+
 
 .reservedFacility {
   display: flex;
   flex-direction: row;
-  width: 100%;
-  align-items: center;
+  width: 80%;
   padding-left: 30px;
-  padding-top: 30px;
+  align-items: center;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  margin: 20px auto;
 }
 
 .reservedImg {
-  width: 40%;
-  height: auto;
+  display: block;
+  width: 60%;
   border-radius: 10px;
-}
-
-.reservedInfo {
-  margin-left: 10%;
+  min-height: 260px;
 }

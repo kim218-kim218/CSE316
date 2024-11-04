@@ -217,6 +217,22 @@ function App() {
         return false;
     }
 
+    // Check if there's already a reservation for the same facility
+    const existingReservation = reservStorage.find(reservation => reservation.facilityName === facilityData.name);
+    if (existingReservation) {
+        alert('Cannot reserve. You already have a reservation for this facility.');
+        return false;
+    }
+
+        // Check if there's already a reservation for the same date
+    const existingDateReservation = reservStorage.find(
+        reservation => new Date(reservation.reservationDate).toDateString() === selectedDate.toDateString()
+    );
+    if (existingDateReservation) {
+        alert('Cannot reserve. You already have a reservation for another facility on this date.');
+        return false;
+    }
+
     //Form for localStorage
     const reservForm = {
         img: facilityData.img,
@@ -281,7 +297,7 @@ function App() {
               📅 {dateOnly}
             </p>
             <p>
-              👥 {reservation.peopleCount}
+              👥 John Doe + {(reservation.peopleCount - 1)}
             </p>
             <p>
               📍 {reservation.roomNumber}

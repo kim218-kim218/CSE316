@@ -1,3 +1,6 @@
+//Nahyun Kim
+//nahyun.kim.4@stonybrook.edu
+
 import React, { useState } from 'react';
 import { useEffect } from "react";
 import './App.css';

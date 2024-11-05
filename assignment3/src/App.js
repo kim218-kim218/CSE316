@@ -16,78 +16,96 @@ function App() {
     purpose: ''
   });
 
+  const [facilities, setFacilities] = useState([]);
+  useEffect(() => {
+        // Fetch API를 사용하여 서버로 GET 요청 보내기
+        fetch('http://localhost:3001/facilities') // 서버에서 시설 정보를 불러오는 엔드포인트
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('데이터를 불러오는 데 실패했습니다.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                setFacilities(data); // 서버로부터 받은 데이터로 상태 업데이트
+            })
+            .catch(error => {
+                console.error("데이터를 불러오는 중 오류 발생:", error);
+            });
+    }, []);
+
   const [isImageModalOpen, setImageModalOpen] = useState(false);
   const [isPasswordModalOpen, setPasswordModalOpen] = useState(false);
   const [isNameModalOpen, setNameModalOpen] = useState(false);
 
-    const facilities = {
-    gymreserv: {
-      name: 'Gym',
-      description: 'sports hall',
-      days: 'Mon, Tue, Wed, Thu, Fri, Sat, Sun',
-      daysArray: [0,1,2,3,4,5,6],
-      groupSize: [1,5],
-      location: 'C1033',
-      available: 'Available to all',
-      img: 'AssignImages/gym.jpg',
-      lock: false
-    },
-    auditoriumreserv: {
-      name: 'Auditorium',
-      description: 'The Auditorium Theater',
-      days :        ' Mon, Tue, Wed, Thu ',
-      daysArray:[2,3,4,5],
-      groupSize: [10,30],
-      location: 'A234',
-      available: 'Available to all',
-      img: 'AssignImages/auditorium.jpg',
-      lock: false
-    },
-    poolreserv: {
-      name: 'Swimming Pool',
-      description: 'aquatic center',
-      days: 'Sun, Sat',
-      daysArray:[0,1],
-      groupSize: [1,8],
-      location: 'C1033',
-      available: 'Available to all',
-      img: 'AssignImages/pool.jpg',
-      lock: false
-    },
-    seminarreserv: {
-      name: 'Seminar Room',
-      description: 'lecture hall',
-      days: 'Mon, Wed, Fri',
-      daysArray:[2,4,6],
-      groupSize: [10,30],
-      location: 'C1033',
-      available: 'Available to all',
-      img: 'AssignImages/seminar.jpg',
-      lock: false
-    },
-    conferencereserv: {
-      name: 'Conference Room',
-      description: 'meeting space',
-      days: 'Mon, Tue, Wed, Thu, Fri',
-      daysArray: [2,3,4,5,6],
-      groupSize: [1,10],
-      location: 'C1033',
-      available: 'Only for SUNY Korea',
-      img: 'AssignImages/conference.jpg',
-      lock: true
-    },
-    libraryreserv: {
-      name: 'Library',
-      description: 'study and read books',
-      days: ' Mon, Tue, Wed, Thu, Fri, Sat, Sun',
-      daysArray: [0,1,2,3,4,5,6],
-      groupSize: [1,20],
-      location: 'C1033',
-      available: 'Only for SUNY Korea',
-      img: 'AssignImages/library.jpg',
-      lock: true
-    }
-  };
+  //   const facilities = {
+  //   gymreserv: {
+  //     name: 'Gym',
+  //     description: 'sports hall',
+  //     days: 'Mon, Tue, Wed, Thu, Fri, Sat, Sun',
+  //     daysArray: [0,1,2,3,4,5,6],
+  //     groupSize: [1,5],
+  //     location: 'C1033',
+  //     available: 'Available to all',
+  //     img: 'AssignImages/gym.jpg',
+  //     lock: false
+  //   },
+  //   auditoriumreserv: {
+  //     name: 'Auditorium',
+  //     description: 'The Auditorium Theater',
+  //     days :        ' Mon, Tue, Wed, Thu ',
+  //     daysArray:[2,3,4,5],
+  //     groupSize: [10,30],
+  //     location: 'A234',
+  //     available: 'Available to all',
+  //     img: 'AssignImages/auditorium.jpg',
+  //     lock: false
+  //   },
+  //   poolreserv: {
+  //     name: 'Swimming Pool',
+  //     description: 'aquatic center',
+  //     days: 'Sun, Sat',
+  //     daysArray:[0,1],
+  //     groupSize: [1,8],
+  //     location: 'C1033',
+  //     available: 'Available to all',
+  //     img: 'AssignImages/pool.jpg',
+  //     lock: false
+  //   },
+  //   seminarreserv: {
+  //     name: 'Seminar Room',
+  //     description: 'lecture hall',
+  //     days: 'Mon, Wed, Fri',
+  //     daysArray:[2,4,6],
+  //     groupSize: [10,30],
+  //     location: 'C1033',
+  //     available: 'Available to all',
+  //     img: 'AssignImages/seminar.jpg',
+  //     lock: false
+  //   },
+  //   conferencereserv: {
+  //     name: 'Conference Room',
+  //     description: 'meeting space',
+  //     days: 'Mon, Tue, Wed, Thu, Fri',
+  //     daysArray: [2,3,4,5,6],
+  //     groupSize: [1,10],
+  //     location: 'C1033',
+  //     available: 'Only for SUNY Korea',
+  //     img: 'AssignImages/conference.jpg',
+  //     lock: true
+  //   },
+  //   libraryreserv: {
+  //     name: 'Library',
+  //     description: 'study and read books',
+  //     days: ' Mon, Tue, Wed, Thu, Fri, Sat, Sun',
+  //     daysArray: [0,1,2,3,4,5,6],
+  //     groupSize: [1,20],
+  //     location: 'C1033',
+  //     available: 'Only for SUNY Korea',
+  //     img: 'AssignImages/library.jpg',
+  //     lock: true
+  //   }
+  // };
 
   //Change page
   function showPage(page){
@@ -395,21 +413,20 @@ function App() {
       {/* Facility List Page */}
       {currentPage == 'F_list' && (
         <div id="F_list" className="page">
-          <ul>
-          {Object.values(facilities).map((facility) => (
-            <div className="F_type" key={facility.name}>
-              <img src={facility.img} alt={facility.name} />
-              <div className="F_info">
-                <h2>{facility.name}</h2>
-                <p>{facility.description}</p>
-                <p>📅 {facility.days}</p>
-                <p>👥 {facility.groupSize}</p>
-                <p>📍 {facility.location}</p>
-                <p>⚠️ {facility.available}</p>
-              </div>
-            </div>
-          ))}
-          </ul>
+            <h1>시설 목록</h1>
+            <ul>
+                {facilities.map(facility => (
+                    <li key={facility.id} style={{ marginBottom: '20px' }}>
+                        <h2>{facility.facility_name}</h2>
+                        <p>{facility.facility_description}</p>
+                        <p>📍 {facility.location}</p>
+                        <p>📅 {facility.available_days}</p>
+                        <p>👥 {facility.min_capacity} - {facility.max_capacity}</p>
+                        {/* 이미지 URL을 사용해 이미지를 화면에 표시 */}
+                        <img src={facility.image_source} alt={facility.facility_name} style={{ width: '300px', height: 'auto' }} />
+                    </li>
+                ))}
+            </ul>
         </div>
       )}
 

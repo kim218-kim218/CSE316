@@ -8,7 +8,7 @@ import './App.css';
 function App() {
 
   const [currentPage, setCurrentPage] = useState('home');
-  const [selectedFacility, setSelectedFacility] = useState('gymreserv');
+  const [selectedFacility, setSelectedFacility] = useState('Gym');
   const [formData, setFormData] = useState({
     date: '',
     people: 0,
@@ -110,6 +110,7 @@ function App() {
   //Change page
   function showPage(page){
     setCurrentPage(page);
+    checkCurrentF();
     const menunav = document.querySelector('.MenuNav');
     if(menunav.style.display=='flex'){
         menunav.style.display = 'none';
@@ -189,7 +190,15 @@ function App() {
     }
   }
 
-  const currentFacility = facilities[selectedFacility];
+  //current Facility == facility that user want to reserv
+  //const currentFacility = facilities[selectedFacility];
+  const currentFacility = facilities.find(facility => facility.facility_name === selectedFacility);
+
+  function checkCurrentF(){
+    console.log("selectedF =" +  selectedFacility);
+    console.log("CurrentFacility = "+currentFacility.facility_name);
+  }
+  
 
   function handleInputChange(e){
     const { id, value } = e.target;
@@ -197,6 +206,7 @@ function App() {
   };
 
   function updateFacilityInfo(e){
+    checkCurrentF();
     setSelectedFacility(e.target.value);
   };
 
@@ -223,9 +233,11 @@ function App() {
         alert('Cannot reserve. The selected date is in the past.');
         return false;
     }
+
+    const week = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     const dayOfWeek = getDay(selectedDate);
     //console.log("day:"+dayOfWeek);
-    if(!facilityData.daysArray.includes(dayOfWeek)){
+    if(!facilityData.daysArray.includes(week[dayOfWeek])){
       alert('Cannot reserve. The selected date is not available.');
         return false;
     }
@@ -416,7 +428,7 @@ function App() {
             <ul>
               
                 {facilities.map(facility => (
-                  <div className="F_type" key={facility.name}>
+                  <div className="F_type" key={facility.facility_name}>
                   <img src={facility.image_source} alt={facility.facility_name} />
                     <div className="F_info">
                       <h2>{facility.name}</h2>
@@ -424,7 +436,7 @@ function App() {
                       <p>📅 {facility.available_days}</p>
                       <p>👥 {facility.min_capacity} - {facility.max_capacity}</p>
                       <p>📍 {facility.location}</p>
-                      <p>⚠️ {facility.available}</p>
+                      <p>⚠️ {facility.only_for_suny ? "Available to all" : "Only for SUNY Korea"}</p>
                     </div>
                   </div>
                 ))}
@@ -438,22 +450,22 @@ function App() {
           <form id="reservForm">
             <label htmlFor="facility">Select Facility:</label>
             <select id="facility" value={selectedFacility} onChange={updateFacilityInfo}>
-              {Object.keys(facilities).map((facility) => (
-                <option key={facility} value={facility}>
-                  {facilities[facility].name}
-                </option>
+              {facilities.map(facility => (
+                <option key={facility.id} value={facility.facility_name}>
+                  {facility.facility_name}
+                </option> 
               ))}
             </select>
 
             <div id="selectedF">
-              <img id="selectedF_img" src={currentFacility.img} alt="Facility" />
+              <img id="selectedF_img" src={currentFacility.image_source} alt="Facility" />
               <div id="selectedFinfo">
-                <h2>{currentFacility.name}</h2>
-                <p>{currentFacility.description}</p>
-                <p>📅 {currentFacility.days}</p>
-                <p>👥 {currentFacility.groupSize[0]+'-'+currentFacility.groupSize[1]}</p>
+                <h2>{currentFacility.facility_name}</h2>
+                <p>{currentFacility.facility_description}</p>
+                <p>📅 {currentFacility.available_days}</p>
+                <p>👥 {currentFacility.min_capacity+'-'+currentFacility.max_capacity}</p>
                 <p>📍 {currentFacility.location}</p>
-                <p>⚠️ {currentFacility.available}</p>
+                <p>⚠️ {currentFacility.only_for_suny ? "Available to all" : "Only for SUNY Korea"}</p>
               </div>
             </div>
 

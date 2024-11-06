@@ -46,6 +46,27 @@ db.connect(err => {
     );
     `;
 
+    const createReservationTable = `
+    CREATE TABLE IF NOT EXISTS reservations (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        reservation_date DATE NOT NULL,
+        user_number INT NOT NULL,
+        is_suny_korea BOOLEAN NOT NULL,
+        purpose TEXT,
+        reservation_name VARCHAR(255),
+        user_name VARCHAR(255)
+    );
+    `;
+
+    db.query(createReservationTable, (err,result) => {
+        if (err) {
+            console.error("reserv table err:", err);
+            return;
+        }
+        console.log("reserv table is created.");
+    });
+
+
     db.query(createFacilitiesTable, (err, result) => {
         if (err) {
             console.error("facilities table err:", err);

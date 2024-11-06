@@ -206,7 +206,6 @@ function App() {
   };
 
   function updateFacilityInfo(e){
-    checkCurrentF();
     setSelectedFacility(e.target.value);
   };
 
@@ -215,7 +214,7 @@ function App() {
   function reserveFacility(){
     let reservStorage = JSON.parse(localStorage.getItem('reservStorage')) || [];
     const facility = document.getElementById('facility').value;
-    const facilityData = facilities[facility];
+    const facilityData = facilities.find(facility => facility.facility_name === selectedFacility);
 
     const selectedDate = new Date(document.getElementById('date').value);
     const today = new Date();
@@ -234,24 +233,25 @@ function App() {
         return false;
     }
 
-    const week = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    const week = [ 'Sat','Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri']
     const dayOfWeek = getDay(selectedDate);
     //console.log("day:"+dayOfWeek);
-    if(!facilityData.daysArray.includes(week[dayOfWeek])){
+    if(!facilityData.available_days.includes(week[dayOfWeek])){
       alert('Cannot reserve. The selected date is not available.');
         return false;
     }
-    if (peopleNum > facilityData.groupSize[1] || peopleNum < facilityData.groupSize[0]) {
+    if (peopleNum > facilityData.max_capacity || peopleNum < facilityData.min_capacity) {
         alert('Cannot reserve. The number of people is not correct.');
         return false;
     }
-    if (facilityData.lock && affiliation == 'no') {
+    if (facilityData.only_for_suny && affiliation == 'no') {
         alert('Cannot reserve. This facility is only available for SUNY Korea members.');
         return false;
     }
 
     // Check if there's already a reservation for the same facility
-    const existingReservation = reservStorage.find(reservation => reservation.facilityName === facilityData.name);
+    const existingReservation = reservStorage.find(reservation => reservation.facilityName === facilityData.facility_name);
+    console.log(existingReservation);
     if (existingReservation) {
         alert('Cannot reserve. You already have a reservation for this facility.');
         return false;
@@ -268,13 +268,13 @@ function App() {
 
     //Form for localStorage
     const reservForm = {
-        img: facilityData.img,
-        facilityName: facilityData.name,
+        img: facilityData.image_source,
+        facilityName: facilityData.facility_name,
         comment: document.getElementById('purpose').value,
         reservationDate: selectedDate,
         peopleCount: peopleNum.toString(),
         roomNumber: facilityData.location,
-        affiliation: facilityData.available
+        affiliation: facilityData.only_for_suny
     };
 
     //console.log(facilityData.img,facilityData.name,document.getElementById('purpose').value,selectedDate,peopleNum.toString(),facilityData.location,facilityData.available);
@@ -300,9 +300,9 @@ function App() {
     }
 
     const j = Math.floor(year / 100);  // first two digits of the year
-    console.log(j);
+    //console.log(j);
     const k = year % 100;  // last two digits of the year
-    console.log(k);
+    //console.log(k);
 
     // cpompute days
     const d = (q + Math.floor((13 * (m + 1)) / 5) + k + Math.floor(k / 4) + Math.floor(j / 4) + (5*j)) % 7;
@@ -369,8 +369,8 @@ function App() {
           <li className="hideOnMobile"><a href="#" onClick={() => showPage('F_list')}>Facility List</a></li>
           <li className="hideOnMobile"><a href="#" onClick={() => showPage('F_reserv')}>Facility Reservation</a></li>
           <li className="hideOnMobile"><a href="#" id="myPageBtn" onClick={(e) => showSidebar('myPageBtn',e)}>User 🔽</a></li>
-          <li className="ProfileIcon"><a href="#"><img src="AssignImages/user.png" alt="Profile Icon"  width="40" height="40" /></a></li>
-          <li className="Hamburger"><a href="#" onClick={(e) => showMenu(e)}><img src="AssignImages/Menu.png" alt="Hambuger" width="30" height="30" /></a></li>
+          <li className="ProfileIcon"><a href="#"><img src="http://res.cloudinary.com/dkeneeift/image/upload/v1730882083/user_gyjnlf.png" alt="Profile Icon"  width="40" height="40" /></a></li>
+          <li className="Hamburger"><a href="#" onClick={(e) => showMenu(e)}><img src="http://res.cloudinary.com/dkeneeift/image/upload/v1730918352/Menu_ijcvu7.png" alt="Hambuger" width="30" height="30" /></a></li>
         </ul>
         </div>
       </nav>
@@ -436,7 +436,7 @@ function App() {
                       <p>📅 {facility.available_days}</p>
                       <p>👥 {facility.min_capacity} - {facility.max_capacity}</p>
                       <p>📍 {facility.location}</p>
-                      <p>⚠️ {facility.only_for_suny ? "Available to all" : "Only for SUNY Korea"}</p>
+                      <p>⚠️ {facility.only_for_suny ? "Only for SUNY Korea" : "Available to all"}</p>
                     </div>
                   </div>
                 ))}
@@ -465,7 +465,7 @@ function App() {
                 <p>📅 {currentFacility.available_days}</p>
                 <p>👥 {currentFacility.min_capacity+'-'+currentFacility.max_capacity}</p>
                 <p>📍 {currentFacility.location}</p>
-                <p>⚠️ {currentFacility.only_for_suny ? "Available to all" : "Only for SUNY Korea"}</p>
+                <p>⚠️ {currentFacility.only_for_suny ? "Only for SUNY Korea" : "Available to all"}</p>
               </div>
             </div>
 
@@ -504,7 +504,7 @@ function App() {
         <div id="myInfo" className="page">
           <h1>User Information</h1>
           <div id="profile_Image">
-            <img src="AssignImages/user.png" alt="Profile" width="200" height="200" />
+            <img src="http://res.cloudinary.com/dkeneeift/image/upload/v1730882083/user_gyjnlf.png" alt="Profile" width="200" height="200" />
           </div>
           <button onClick={() => setImageModalOpen(true)}>Change Image</button>
 

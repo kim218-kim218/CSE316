@@ -17,21 +17,19 @@ function App() {
   });
 
   const [facilities, setFacilities] = useState([]);
+  const [reservations, setReservations] = useState([]);
+
   useEffect(() => {
-        // Fetch API를 사용하여 서버로 GET 요청 보내기
-        fetch('http://localhost:3001/facilities') // 서버에서 시설 정보를 불러오는 엔드포인트
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('데이터를 불러오는 데 실패했습니다.');
-                }
-                return response.json();
-            })
-            .then(data => {
-                setFacilities(data); // 서버로부터 받은 데이터로 상태 업데이트
-            })
-            .catch(error => {
-                console.error("데이터를 불러오는 중 오류 발생:", error);
-            });
+        fetch('http://localhost:3001/facilities') 
+            .then(response => response.json())
+            .then(data => {setFacilities(data);}) // update facilities
+            .catch(error => {console.error("Error in fetching facilities:", error);});
+
+        fetch('http://localhost:3001/reservations')
+            .then(response => response.json())
+            .then(data => setReservations(data))
+            .catch(error => console.error("Error in fetching reservations:", error));
+
     }, []);
 
   const [isImageModalOpen, setImageModalOpen] = useState(false);
@@ -209,10 +207,9 @@ function App() {
     setSelectedFacility(e.target.value);
   };
 
-  const [reservations, setReservations] = useState([]);
   
-  function reserveFacility(){
-    let reservStorage = JSON.parse(localStorage.getItem('reservStorage')) || [];
+  async function reserveFacility(){
+    //let reservStorage = JSON.parse(localStorage.getItem('reservStorage')) || [];
     const facility = document.getElementById('facility').value;
     const facilityData = facilities.find(facility => facility.facility_name === selectedFacility);
 
@@ -249,39 +246,86 @@ function App() {
         return false;
     }
 
+    // // Check if there's already a reservation for the same facility
+    // const existingReservation = reservStorage.find(reservation => reservation.facilityName === facilityData.facility_name);
+    // console.log(existingReservation);
+    // if (existingReservation) {
+    //     alert('Cannot reserve. You already have a reservation for this facility.');
+    //     return false;
+    // }
+
+    //     // Check if there's already a reservation for the same date
+    // const existingDateReservation = reservStorage.find(
+    //     reservation => new Date(reservation.reservationDate).toDateString() === selectedDate.toDateString()
+    // );
+    // if (existingDateReservation) {
+    //     alert('Cannot reserve. You already have a reservation for another facility on this date.');
+    //     return false;
+    // }
+
+
     // Check if there's already a reservation for the same facility
-    const existingReservation = reservStorage.find(reservation => reservation.facilityName === facilityData.facility_name);
-    console.log(existingReservation);
+    const existingReservation = reservations.find(reservation =>reservation.reservation_name === facilityData.facility_name);
     if (existingReservation) {
-        alert('Cannot reserve. You already have a reservation for this facility.');
-        return false;
+      console.log(existingReservation);
+      alert('Cannot reserve. You already have a reservation for this facility.');
+      return false;
     }
 
-        // Check if there's already a reservation for the same date
-    const existingDateReservation = reservStorage.find(
-        reservation => new Date(reservation.reservationDate).toDateString() === selectedDate.toDateString()
-    );
+    // Check if there's already a reservation for the same date
+    const existingDateReservation = reservations.some(reservation => new Date(reservation.reservation_date).toDateString() === selectedDate.toDateString());
     if (existingDateReservation) {
         alert('Cannot reserve. You already have a reservation for another facility on this date.');
         return false;
     }
 
-    //Form for localStorage
+    // //Form for localStorage
+    // const reservForm = {
+    //     img: facilityData.image_source,
+    //     facilityName: facilityData.facility_name,
+    //     comment: document.getElementById('purpose').value,
+    //     reservationDate: selectedDate,
+    //     peopleCount: peopleNum.toString(),
+    //     roomNumber: facilityData.location,
+    //     affiliation: facilityData.only_for_suny
+    // };
+
     const reservForm = {
-        img: facilityData.image_source,
-        facilityName: facilityData.facility_name,
-        comment: document.getElementById('purpose').value,
-        reservationDate: selectedDate,
-        peopleCount: peopleNum.toString(),
-        roomNumber: facilityData.location,
-        affiliation: facilityData.only_for_suny
+        reservation_date: selectedDate.toISOString().split('T')[0], // YYYY-MM-DD
+        user_number: peopleNum,
+        is_suny_korea: facilityData.only_for_suny,
+        purpose: document.getElementById('purpose').value,
+        reservation_name: facilityData.facility_name,
+        user_name: 'Nahyun Kim', 
+        location: facilityData.location,
     };
 
     //console.log(facilityData.img,facilityData.name,document.getElementById('purpose').value,selectedDate,peopleNum.toString(),facilityData.location,facilityData.available);
+    try {
+        const response = await fetch('http://localhost:3001/reservations', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(reservForm)
+        });
 
-    reservStorage.push(reservForm);
-    localStorage.setItem('reservStorage', JSON.stringify(reservStorage));// Save form data in localStorage
-    setReservations(reservStorage);
+        if (!response.ok) {
+            throw new Error('Failed to add reservation');
+        }
+
+        //setReservations([...reservations, reservForm]);
+        await fetchReservations();
+        //console.log("???:"+reservations); 
+    } catch (error) {
+        console.error("Error making reservation:", error);
+        alert('Failed to make reservation.');
+        return false;
+    }
+    
+    //reservStorage.push(reservForm);
+    //localStorage.setItem('reservStorage', JSON.stringify(reservStorage));// Save form data in localStorage
+    //setReservations(reservStorage);
     alert('Reservation successful!');
     displayReservations();
 
@@ -310,35 +354,42 @@ function App() {
     return d; 
   }
 
+  //serach image source from facilities table.
+  function searchImage(reservation){
+    const f = facilities.find(f=> f.facility_name === reservation.reservation_name);
+    return f.image_source;
+  }
+
   //Function for my Reservation page. Run this func->show what facility is reserved and save in localStorage
   function  displayReservations(){
-    let myReservations = JSON.parse(localStorage.getItem('reservStorage')) || [];
-    if(myReservations.length==0){
+    //let myReservations = JSON.parse(localStorage.getItem('reservStorage')) || [];
+    if(reservations.length==0){
       //console.log("empty??");
       return <p  className="no-reservation">No Reservation Yet</p>;
     }
     else{
-      return myReservations.map((reservation,idx)=>{
-        const dateOnly = new Date(reservation.reservationDate).toISOString().split('T')[0]; 
+      return reservations.map((reservation,idx)=>{
+        console.log("Reservation ID:", reservation.id); 
+        const dateOnly = new Date(reservation.reservation_date).toISOString().split('T')[0]; 
         return (
         <div key={idx} className="reservedFacility">
-          <img className="reservedImg" src={reservation.img} alt={reservation.facilityName} />
+          <img className="reservedImg" src={searchImage(reservation)} alt={reservation.reservation_name} />
           <div className="reservedInfo">
-            <h2>{reservation.facilityName}</h2>
-            <p>📝 {reservation.comment}</p>
+            <h2>{reservation.reservation_name}</h2>
+            <p>📝 {reservation.purpose}</p>
             <p>
               📅 {dateOnly}
             </p>
             <p>
-              👥 John Doe + {(reservation.peopleCount - 1)}
+              👥 {reservation.user_name}  + {(reservation.user_number - 1)}
             </p>
             <p>
-              📍 {reservation.roomNumber}
+              📍 {reservation.location}
             </p>
             <p>
-              ⚠️ {reservation.affiliation}
+              ⚠️ {reservation.only_for_suny ? "Only for SUNY Korea" : "Available to all"}
             </p>
-            <button onClick={() => cancelReservation(idx)}>Cancel</button> {/* 취소 버튼 추가 */}
+            <button onClick={() => cancelReservation(reservation.id)}>Cancel</button>
           </div>
         </div>
       );
@@ -346,19 +397,56 @@ function App() {
     )}
   }
 
-  const cancelReservation = (index) => {
-    // bring recent reservations from localStorage
-    let myReservations = JSON.parse(localStorage.getItem('reservStorage')) || [];
+//   const cancelReservation = (index) => {
+//     // bring recent reservations from localStorage
+//     let myReservations = JSON.parse(localStorage.getItem('reservStorage')) || [];
 
-    // remove reservation which placed in 'index'
-    myReservations.splice(index, 1);
+//     // remove reservation which placed in 'index'
+//     myReservations.splice(index, 1);
 
-    // update localStorage 
-    localStorage.setItem('reservStorage', JSON.stringify(myReservations));
+//     // update localStorage 
+//     localStorage.setItem('reservStorage', JSON.stringify(myReservations));
 
-    // set changed updated reservation on the list of reservation
-    setReservations(myReservations);
-};
+//     // set changed updated reservation on the list of reservation
+//     setReservations(myReservations);
+// };
+
+  // reservations fetching
+  async function fetchReservations() {
+      try {
+          const response = await fetch('http://localhost:3001/reservations');
+          if (!response.ok) {
+              throw new Error('Failed to fetch reservations');
+          }
+          const data = await response.json();
+          setReservations(data); // reservations 상태 업데이트
+          //console.log(reservations); 
+      } catch (error) {
+          console.error("Error fetching reservations:", error);
+      }
+  }
+
+  async function cancelReservation(reservationId) {
+    console.log(reservationId);
+      try {
+          const response = await fetch(`http://localhost:3001/reservations/${reservationId}`, {
+              method: 'DELETE'
+          });
+
+          if (!response.ok) {
+              throw new Error('Failed to cancel reservation');
+          }
+
+          await fetchReservations();
+          console.log(reservations); 
+
+          alert('Reservation cancelled successfully');
+      } catch (error) {
+          console.error("Error cancelling reservation:", error);
+          alert('Failed to cancel reservation.');
+      }
+  };
+
 
   return (
     <div className="App">

@@ -54,7 +54,8 @@ db.connect(err => {
         is_suny_korea BOOLEAN NOT NULL,
         purpose TEXT,
         reservation_name VARCHAR(255),
-        user_name VARCHAR(255)
+        user_name VARCHAR(255),
+        location VARCHAR(50)
     );
     `;
 
@@ -100,8 +101,8 @@ app.get('/facilities', (req, res) => {
     const selectQuery = "SELECT * FROM facilities";
     db.query(selectQuery, (err, results) => {
         if (err) {
-            console.error("데이터 조회 오류:", err);
-            res.status(500).send('데이터 조회 중 오류 발생');
+            console.error("Error in getting facilities:", err);
+            res.status(500).send('Error in getting facilities...');
             return;
         }
         res.json(results); 
@@ -146,7 +147,7 @@ cloudinary.config({
 // const conferenceRoomImageUrl = 'https://res.cloudinary.com/cloud_name/image/upload/v1234567890/conference_room.png';
 // const libraryImageUrl = 'https://res.cloudinary.com/cloud_name/image/upload/v1234567890/library.png';
 
-// 시설명과 이미지 이름 매핑
+// Mapping facility and URL
 const facilityImageMapping = {
     Gym: 'gym',
     Auditorium: 'auditorium',
@@ -156,45 +157,36 @@ const facilityImageMapping = {
     Library: 'library'
 };
 
-// 특정 폴더에서 이미지 URL 가져오기
+// Brin URL in Cloudinary
 const fetchImagesFromFolder = async () => {
     console.log("Cloudinary Config:", {
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
+
     try {
         const result = await cloudinary.api.resources({
             type: 'upload',
             resource_type: 'image',
-            //prefix: 'CSE316_Images/', // 폴더 경로 지정
+            //prefix: 'CSE316_Images/', 
             max_results: 10
         });
-console.log("Result from Cloudinary API:", result);
-        // 이미지 이름과 URL 매핑
+        console.log("Result from Cloudinary API:", result);
         const imageUrls = {};
         result.resources.forEach(resource => {
-            if (resource.asset_folder === 'CSE316_Images') { // asset_folder 확인
-                const fileName = resource.public_id.split('/').pop(); // 파일명만 추출
+            if (resource.asset_folder === 'CSE316_Images') { // asset_folder
+                const fileName = resource.public_id.split('/').pop(); // Only filename
                 console.log("Extracted fileName:", fileName);
 
-                // facilityImageMapping에 있는 파일명과 비교하여 매핑
+                // facilityImageMapping
                 Object.keys(facilityImageMapping).forEach(facility => {
-                    if (fileName.startsWith(facilityImageMapping[facility])) { // 파일명이 일치하는 경우
+                    if (fileName.startsWith(facilityImageMapping[facility])) { // if file name is same -> mapping
                         imageUrls[facility] = resource.secure_url;
                     }
                 });
             }
         });
-        // result.resources.forEach(resource => {
-        //     const fileName = resource.public_id.split('/').pop(); // 파일명만 추출
-        //     console.log(fileName);
-        //     Object.keys(facilityImageMapping).forEach(facility => {
-        //         if (fileName === facilityImageMapping[facility]) {
-        //             imageUrls[facility] = resource.secure_url;
-        //         }
-        //     });
-        // });
 
         console.log("Image URLs by Facility:", imageUrls);
         return imageUrls; // 각 시설에 매핑된 이미지 URL 객체 반환
@@ -230,8 +222,57 @@ const insertFacilitiesData = async () => {
     });
 };
 
+// 예약 추가 API
+app.post('/reservations', (req, res) => {
+    const { reservation_date, user_number, is_suny_korea, purpose, reservation_name, user_name, location } = req.body;
+
+    const insertQuery = `
+        INSERT INTO reservations (reservation_date, user_number, is_suny_korea, purpose, reservation_name, user_name, location)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+
+     db.query(insertQuery, [reservation_date, user_number, is_suny_korea, purpose, reservation_name, user_name, location], (err, result) => {
+        if (err) {
+            console.error("Error adding reservation:", err);
+            res.status(500).send("Failed to add reservation");
+            return;
+        }
+        res.send("Reservation added successfully");
+    });
+});
 
 
+app.get('/reservations', (req, res) => {
+    const selectQuery = "SELECT * FROM reservations";
+    db.query(selectQuery, (err, results) => {
+        if (err) {
+            console.error("Error in getting reservations:", err);
+            res.status(500).send('Error in getting reservations...');
+            return;
+        }
+        res.json(results); 
+    });
+});
+
+// delete reservation with specific id
+app.delete('/reservations/:id', (req, res) => {
+    const reservationId = req.params.id;
+
+    const deleteQuery = 'DELETE FROM reservations WHERE id = ?';
+    db.query(deleteQuery, [reservationId], (err, result) => {
+        if (err) {
+            console.error("Error in removing reservation:", err);
+            res.status(500).send("Error in removing...");
+            return;
+        }
+
+        if (result.affectedRows === 0) {
+            res.status(404).send("Cannot find the reservation.");
+        } else {
+            res.send("Successfully removed.");
+        }
+    });
+});
 
 
 app.get('/', (req, res) => {

@@ -367,3 +367,63 @@ hr {
   border-radius: 10px;
   min-height: 260px;
 }
+
+/* Center alignment for the form */
+.sign-container {
+  padding-top: 50px;
+  max-width: 300px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* .sign-container h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+} */
+
+.sign-form {
+  display: flex;
+  padding-top: 50px;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.sign-form label {
+  text-align: left;
+  padding-top: 30px;
+  font-size: 14px;
+}
+
+.sign-form input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.button-group {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  padding-top: 30px;
+}
+
+.button-group button {
+  padding: 10px 15px;
+  font-size: 16px;
+  background-color: transparent;
+  border: 2px solid rgb(41, 141, 217);
+  color: rgb(41, 141, 217);
+  cursor: pointer;
+}
+
+.button-group button:hover{
+  background-color: #7fa57d !important;
+}
+
+
+.button-group button:nth-child(2) {
+  border: 2px solid rgb(55, 55, 60);
+    color: rgb(55, 55, 60);
+}

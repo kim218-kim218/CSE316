@@ -4,6 +4,9 @@
 import React, { useState } from 'react';
 import { useEffect } from "react";
 import './App.css';
+import { hashutil } from './hashutil/javascript/Hashutil.js';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Sign from './Sign.js';
 
 function App() {
 
@@ -35,75 +38,6 @@ function App() {
   const [isImageModalOpen, setImageModalOpen] = useState(false);
   const [isPasswordModalOpen, setPasswordModalOpen] = useState(false);
   const [isNameModalOpen, setNameModalOpen] = useState(false);
-
-  //   const facilities = {
-  //   gymreserv: {
-  //     name: 'Gym',
-  //     description: 'sports hall',
-  //     days: 'Mon, Tue, Wed, Thu, Fri, Sat, Sun',
-  //     daysArray: [0,1,2,3,4,5,6],
-  //     groupSize: [1,5],
-  //     location: 'C1033',
-  //     available: 'Available to all',
-  //     img: 'AssignImages/gym.jpg',
-  //     lock: false
-  //   },
-  //   auditoriumreserv: {
-  //     name: 'Auditorium',
-  //     description: 'The Auditorium Theater',
-  //     days :        ' Mon, Tue, Wed, Thu ',
-  //     daysArray:[2,3,4,5],
-  //     groupSize: [10,30],
-  //     location: 'A234',
-  //     available: 'Available to all',
-  //     img: 'AssignImages/auditorium.jpg',
-  //     lock: false
-  //   },
-  //   poolreserv: {
-  //     name: 'Swimming Pool',
-  //     description: 'aquatic center',
-  //     days: 'Sun, Sat',
-  //     daysArray:[0,1],
-  //     groupSize: [1,8],
-  //     location: 'C1033',
-  //     available: 'Available to all',
-  //     img: 'AssignImages/pool.jpg',
-  //     lock: false
-  //   },
-  //   seminarreserv: {
-  //     name: 'Seminar Room',
-  //     description: 'lecture hall',
-  //     days: 'Mon, Wed, Fri',
-  //     daysArray:[2,4,6],
-  //     groupSize: [10,30],
-  //     location: 'C1033',
-  //     available: 'Available to all',
-  //     img: 'AssignImages/seminar.jpg',
-  //     lock: false
-  //   },
-  //   conferencereserv: {
-  //     name: 'Conference Room',
-  //     description: 'meeting space',
-  //     days: 'Mon, Tue, Wed, Thu, Fri',
-  //     daysArray: [2,3,4,5,6],
-  //     groupSize: [1,10],
-  //     location: 'C1033',
-  //     available: 'Only for SUNY Korea',
-  //     img: 'AssignImages/conference.jpg',
-  //     lock: true
-  //   },
-  //   libraryreserv: {
-  //     name: 'Library',
-  //     description: 'study and read books',
-  //     days: ' Mon, Tue, Wed, Thu, Fri, Sat, Sun',
-  //     daysArray: [0,1,2,3,4,5,6],
-  //     groupSize: [1,20],
-  //     location: 'C1033',
-  //     available: 'Only for SUNY Korea',
-  //     img: 'AssignImages/library.jpg',
-  //     lock: true
-  //   }
-  // };
 
   //Change page
   function showPage(page){
@@ -457,6 +391,7 @@ function App() {
           <li className="hideOnMobile"><a href="#" onClick={() => showPage('F_list')}>Facility List</a></li>
           <li className="hideOnMobile"><a href="#" onClick={() => showPage('F_reserv')}>Facility Reservation</a></li>
           <li className="hideOnMobile"><a href="#" id="myPageBtn" onClick={(e) => showSidebar('myPageBtn',e)}>User 🔽</a></li>
+          <li className="hideOnMobile"><a href="#" id="SignIn" onClick={() => showPage('SignIn')}>Sign In</a></li>
           <li className="ProfileIcon"><a href="#"><img src="http://res.cloudinary.com/dkeneeift/image/upload/v1730882083/user_gyjnlf.png" alt="Profile Icon"  width="40" height="40" /></a></li>
           <li className="Hamburger"><a href="#" onClick={(e) => showMenu(e)}><img src="http://res.cloudinary.com/dkeneeift/image/upload/v1730918352/Menu_ijcvu7.png" alt="Hambuger" width="30" height="30" /></a></li>
         </ul>
@@ -658,6 +593,17 @@ function App() {
       {currentPage =='myReserv' && (
         <div id="myReserv" className="page myReserv">
           {displayReservations()}
+        </div>
+      )}
+
+      {currentPage =='SignIn' && (
+        <div id="SignIn">
+          <Router>
+            <Routes>
+                {/* <Route path="/" element={<h2>Home Page</h2>} /> */}
+                <Route path="/" element={<Sign />} />
+            </Routes>
+        </Router>
         </div>
       )}
     </div>

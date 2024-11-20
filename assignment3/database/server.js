@@ -116,37 +116,6 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// app.post('/upload-images', async (req, res) => {
-//     const filePaths = req.body.filePaths; // get filePaths
-
-//     if (!Array.isArray(filePaths) || filePaths.length === 0) {
-//         return res.status(400).send("No files provided");
-//     }
-
-//     try {
-//         // For all path -> uploade
-//         const uploadPromises = filePaths.map(filePath => 
-//             cloudinary.uploader.upload(filePath)
-//         );
-
-//         // Wait for iimage uploaded
-//         const uploadResults = await Promise.all(uploadPromises);
-//         const imageUrls = uploadResults.map(result => result.secure_url);
-
-//         res.json({ imageUrls }); 
-//     } catch (error) {
-//         console.error("Error uploading images:", error);
-//         res.status(500).send("Failed to upload images");
-//     }
-// });
-
-// const gymImageUrl = 'https://res.cloudinary.com/cloud_name/image/upload/v1234567890/gym.png';
-// const auditoriumImageUrl = 'https://res.cloudinary.com/cloud_name/image/upload/v1234567890/auditorium.png';
-// const swimmingPoolImageUrl = 'https://res.cloudinary.com/cloud_name/image/upload/v1234567890/swimming_pool.png';
-// const seminarRoomImageUrl = 'https://res.cloudinary.com/cloud_name/image/upload/v1234567890/seminar_room.png';
-// const conferenceRoomImageUrl = 'https://res.cloudinary.com/cloud_name/image/upload/v1234567890/conference_room.png';
-// const libraryImageUrl = 'https://res.cloudinary.com/cloud_name/image/upload/v1234567890/library.png';
-
 // Mapping facility and URL
 const facilityImageMapping = {
     Gym: 'gym',
@@ -157,7 +126,7 @@ const facilityImageMapping = {
     Library: 'library'
 };
 
-// Brin URL in Cloudinary
+// Bring URL in Cloudinary
 const fetchImagesFromFolder = async () => {
     console.log("Cloudinary Config:", {
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -222,7 +191,7 @@ const insertFacilitiesData = async () => {
     });
 };
 
-// 예약 추가 API
+// add reservation.
 app.post('/reservations', (req, res) => {
     const { reservation_date, user_number, is_suny_korea, purpose, reservation_name, user_name, location } = req.body;
 

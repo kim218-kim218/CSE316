@@ -29,7 +29,7 @@ function SignUp({ showPage }) {
         }
 
         try {
-            const hashedPassword = hashutil(formData.email, formData.password);
+            const hashedPassword = hashutil(formData.email, formData.password); // hashing
             console.log('Request Payload:', {
                 email: formData.email,
                 username: formData.username,
@@ -48,29 +48,20 @@ function SignUp({ showPage }) {
                 })
             });
 
-        const result = await response.json();
+            const result = await response.json();
 
-        if (response.ok) {
-            console.log('User registered successfully:', result.message);
-            alert(result.message);
-        } else {
-            console.error('Registration failed:', result.message);
-            alert(result.message);
+            if (response.ok) {
+                //console.log('User registered successfully:', result.message);
+                alert(result.message);
+            } else {
+                //console.error('Registration failed:', result.message);
+                alert(result.message);
+            }
+
+        } catch (error) {
+            //console.error('Error during registration:', error);
+            alert('Failed to register. Please try again later.');
         }
-    } catch (error) {
-        console.error('Error during registration:', error);
-        alert('Failed to register. Please try again later.');
-    }
-        //     const data = await response.json();
-        //     if (!response.ok) {
-        //         throw new Error(data.message || "Registration failed");
-        //     }
-
-        //     alert(data.message);
-        // } catch (error) {
-        //     console.error("Error during registration:", error);
-        //     alert(error.message);
-        // }
     };
 
     return (

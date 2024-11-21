@@ -263,7 +263,7 @@ app.delete('/reservations/:id', (req, res) => {
 
 app.post('/register', (req, res) => {
     const { email, username, password } = req.body;
-console.log('Received Request Body:', req.body);
+    console.log('Received Request Body:', req.body);
     if (!email || !password || !username) {
         console.error('Missing required fields:', { email, password, username });
         return res.status(400).json({ message: 'Missing required fields' });

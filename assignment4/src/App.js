@@ -181,24 +181,6 @@ function App() {
         return false;
     }
 
-    // // Check if there's already a reservation for the same facility
-    // const existingReservation = reservStorage.find(reservation => reservation.facilityName === facilityData.facility_name);
-    // console.log(existingReservation);
-    // if (existingReservation) {
-    //     alert('Cannot reserve. You already have a reservation for this facility.');
-    //     return false;
-    // }
-
-    //     // Check if there's already a reservation for the same date
-    // const existingDateReservation = reservStorage.find(
-    //     reservation => new Date(reservation.reservationDate).toDateString() === selectedDate.toDateString()
-    // );
-    // if (existingDateReservation) {
-    //     alert('Cannot reserve. You already have a reservation for another facility on this date.');
-    //     return false;
-    // }
-
-
     // Check if there's already a reservation for the same facility
     const existingReservation = reservations.find(reservation =>reservation.reservation_name === facilityData.facility_name);
     if (existingReservation) {
@@ -213,17 +195,6 @@ function App() {
         alert('Cannot reserve. You already have a reservation for another facility on this date.');
         return false;
     }
-
-    // //Form for localStorage
-    // const reservForm = {
-    //     img: facilityData.image_source,
-    //     facilityName: facilityData.facility_name,
-    //     comment: document.getElementById('purpose').value,
-    //     reservationDate: selectedDate,
-    //     peopleCount: peopleNum.toString(),
-    //     roomNumber: facilityData.location,
-    //     affiliation: facilityData.only_for_suny
-    // };
 
     const reservForm = {
         reservation_date: selectedDate.toISOString().split('T')[0], // YYYY-MM-DD
@@ -331,20 +302,6 @@ function App() {
       }
     )}
   }
-
-//   const cancelReservation = (index) => {
-//     // bring recent reservations from localStorage
-//     let myReservations = JSON.parse(localStorage.getItem('reservStorage')) || [];
-
-//     // remove reservation which placed in 'index'
-//     myReservations.splice(index, 1);
-
-//     // update localStorage 
-//     localStorage.setItem('reservStorage', JSON.stringify(myReservations));
-
-//     // set changed updated reservation on the list of reservation
-//     setReservations(myReservations);
-// };
 
   // reservations fetching
   async function fetchReservations() {

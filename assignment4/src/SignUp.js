@@ -2,7 +2,7 @@
 // nahyun.kim.4@stonybrook.edu
 
 import React, { useState } from 'react';
-import { hashutil } from '../hashutil/javascript/Hashutil.js';
+import { hashutil } from './hashutil/javascript/Hashutil.js';
 
 function SignUp({ showPage }) {
     const [formData, setFormData] = useState({

@@ -6,7 +6,8 @@ import { useEffect } from "react";
 import './App.css';
 import { hashutil } from './hashutil/javascript/Hashutil.js';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Sign from './Sign.js';
+import SignIn from './Sign/SignIn.js';
+import SignUp from './Sign/SignUp.js';
 
 function App() {
 
@@ -601,7 +602,18 @@ function App() {
           <Router>
             <Routes>
                 {/* <Route path="/" element={<h2>Home Page</h2>} /> */}
-                <Route path="/" element={<Sign />} />
+                <Route path="/" element={<SignIn showPage={showPage} />} />
+            </Routes>
+        </Router>
+        </div>
+      )}
+
+      {currentPage =='SignUp' && (
+        <div id="SignUp">
+          <Router>
+            <Routes>
+                {/* <Route path="/" element={<h2>Home Page</h2>} /> */}
+                <Route path="/" element={<SignUp showPage={showPage} />} />
             </Routes>
         </Router>
         </div>

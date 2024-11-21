@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
-import { hashutil } from './hashutil/javascript/Hashutil.js';
+// Nahyun Kim
+// nahyun.kim.4@stonybrook.edu
 
-function Sign() {
+import React, { useState } from 'react';
+import { hashutil } from '../hashutil/javascript/Hashutil.js';
+
+function SignUp({ showPage }) {
     const [formData, setFormData] = useState({
         email: '',
         username: '',
@@ -55,7 +58,7 @@ function Sign() {
         
         <div>
             <div className="sign-container">
-                <h2>Sign In</h2>
+                <h2>Sign Up</h2>
                 <form className="sign-form">
                     <label htmlFor="email">E-mail</label>
                     <input type="email" id="email" value={formData.email}/>
@@ -63,50 +66,20 @@ function Sign() {
                     <label htmlFor="password">Password</label>
                     <input type="password" id="password" value={formData.password}/>
 
+                    <label htmlFor="password">Password Check</label>
+                    <input type="password" id="password" value={formData.confirmPassword}/>
+
+                    <label htmlFor="password">User Name</label>
+                    <input type="password" id="password" value={formData.name}/>
+
                     <div className="button-group">
-                    <button type="submit">Sign in</button>
-                    <button type="button">Sign up</button>
+                    <button type="submit">Sign Up</button>
                     </div>
                 </form>
             </div>
-        {/* <form onSubmit={handleSubmit}>
-            <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-            />
-            <input
-                type="text"
-                name="username"
-                placeholder="Username"
-                value={formData.username}
-                onChange={handleChange}
-                required
-            />
-            <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-            />
-            <input
-                type="password"
-                name="confirmPassword"
-                placeholder="Confirm Password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-            />
-            <button type="submit">Sign Up</button>
-        </form> */}
 
         </div>
     );
 }
 
-export default Sign;
+export default SignUp;

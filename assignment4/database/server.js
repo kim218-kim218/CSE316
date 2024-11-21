@@ -59,6 +59,23 @@ db.connect(err => {
     );
     `;
 
+    const createUsersTable = `
+    CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        email VARCHAR(255) NOT NULL UNIQUE,    
+        password varchar(255) NOT NULL,
+        username VARCHAR(255) NOT NULL
+    );
+    `;
+
+    db.query(createUsersTable, (err,result) => {
+        if (err) {
+            console.error("users table err:", err);
+            return;
+        }
+        console.log("users table is created.");
+    })
+
     db.query(createReservationTable, (err,result) => {
         if (err) {
             console.error("reserv table err:", err);
@@ -243,6 +260,55 @@ app.delete('/reservations/:id', (req, res) => {
     });
 });
 
+
+app.post('/register', (req, res) => {
+    const { email, username, password } = req.body;
+console.log('Received Request Body:', req.body);
+    if (!email || !password || !username) {
+        console.error('Missing required fields:', { email, password, username });
+        return res.status(400).json({ message: 'Missing required fields' });
+    }
+    else{
+        console.log("not missing");
+    }    
+
+    // Check if email already exists
+    const checkQuery = 'SELECT * FROM users WHERE email = ?';
+    db.query(checkQuery, [email], (err, results) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json({ message: 'Database error' });
+        }
+
+        if (results.length > 0) {
+            return res.status(400).json({ message: 'Email already exists' });
+        }
+
+        // Insert new user
+        const insertQuery = 'INSERT INTO users (email, password, username) VALUES (?, ?, ?)';
+        db.query(insertQuery, [email, password, username], (err, results) => {
+            
+            if (err) {
+                console.error('Error inserting user:', err);
+                return res.status(500).json({ message: 'Failed to create user...' });
+            }
+
+            res.status(201).json({ message: 'User registered successfully' });
+        });
+    });
+});
+
+app.get('/register', (req, res) => {
+    const selectQuery = "SELECT * FROM users";
+    db.query(selectQuery, (err, results) => {
+        if (err) {
+            console.error("Error in getting register:", err);
+            res.status(500).send('Error in getting register...');
+            return;
+        }
+        res.json(results); 
+    });
+});
 
 app.get('/', (req, res) => {
     res.send('Server is open');

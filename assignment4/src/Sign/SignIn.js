@@ -5,11 +5,11 @@ import React, { useState } from 'react';
 import { hashutil } from '../hashutil/javascript/Hashutil.js';
 
 function SignIn({ showPage }) {
-    const [formData, setFormData] = useState({
+     const [formData, setFormData] = useState({
         email: '',
-        username: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        username: ''
     });
 
     const handleChange = (e) => {
@@ -37,10 +37,12 @@ function SignIn({ showPage }) {
                 },
                 body: JSON.stringify({
                     email: formData.email,
-                    username: formData.username,
-                    password: hashedPassword
+                    password: hashedPassword,
+                    username: formData.username
                 })
             });
+
+            
 
             const data = await response.json();
             if (!response.ok) {
@@ -55,7 +57,6 @@ function SignIn({ showPage }) {
     };
 
     return (
-        
         <div>
             <div className="sign-container">
                 <h2>Sign In</h2>

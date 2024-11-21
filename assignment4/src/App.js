@@ -338,26 +338,23 @@ function App() {
       }
   };
 
+
+
+  /*
+      Sign In 
+  */
     const [users, setUsers] = useState([]); // Store user data from `/register`
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
+    const [isLogin, setLogin] = useState(false);
 
     // Fetch user data from `/register`
     useEffect(() => {
         fetch('http://localhost:3001/register') // Fetch all users from backend
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch user data');
-                }
-                return response.json();
-            })
-            .then(data => {
-                setUsers(data); // Store the user data locally
-            })
-            .catch(error => {
-                console.error("Error fetching user data:", error);
-            });
+            .then(response => {response.json();})
+            .then(data => { setUsers(data); })// Store the user data locally
+            .catch(error => {console.error("Error fetching user data:", error);});
     }, []);
 
     // Handle Sign-In Form Submission
@@ -380,6 +377,8 @@ function App() {
         }
 
         // Sign-In Successful
+        setLogin(true);
+        showPage('home');
         alert("User Registered Successfully!");
     };
 
@@ -391,6 +390,11 @@ function App() {
         setPassword(e.target.value); 
     };
 
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
 
   return (
     <div className="App">
@@ -398,9 +402,9 @@ function App() {
         <div className="navContainer">
         <ul>
           <li className="HomeIcon"><a href="#" onClick={() => showPage('home')}>Home</a></li>
-          <li className="hideOnMobile"><a href="#" onClick={() => showPage('F_list')}>Facility List</a></li>
-          <li className="hideOnMobile"><a href="#" onClick={() => showPage('F_reserv')}>Facility Reservation</a></li>
-          <li className="hideOnMobile"><a href="#" id="myPageBtn" onClick={(e) => showSidebar('myPageBtn',e)}>User 🔽</a></li>
+          <li className="hideOnMobile"><a href="#" onClick={() => isLogin ?  showPage('F_list'):showPage('SignIn')}>Facility List</a></li>
+          <li className="hideOnMobile"><a href="#" onClick={() => isLogin ? showPage('F_reserv'):showPage('SignIn')}>Facility Reservation</a></li>
+          <li className="hideOnMobile"><a href="#" id="myPageBtn" onClick={(e) => isLogin ?showSidebar('myPageBtn',e):showPage('SignIn')}>User 🔽</a></li>
           <li className="hideOnMobile"><a href="#" id="SignIn" onClick={() => showPage('SignIn')}>Sign In</a></li>
           <li className="ProfileIcon"><a href="#"><img src="http://res.cloudinary.com/dkeneeift/image/upload/v1730882083/user_gyjnlf.png" alt="Profile Icon"  width="40" height="40" /></a></li>
           <li className="Hamburger"><a href="#" onClick={(e) => showMenu(e)}><img src="http://res.cloudinary.com/dkeneeift/image/upload/v1730918352/Menu_ijcvu7.png" alt="Hambuger" width="30" height="30" /></a></li>

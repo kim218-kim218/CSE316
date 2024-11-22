@@ -422,11 +422,12 @@ function App() {
     function SignOutBtn(){
       setLogin(false);
       showPage('home');
+      
       alert("User SignOut Successfully!");
     }
 
   /*
-      Modal Condition
+      Password Modal Condition
   */
 
       const [message, setMessage] = useState('');
@@ -434,9 +435,6 @@ function App() {
         console.log("Password has been updated to: " + password);
       }, [password]);
 
-      useEffect(() =>{
-        console.log("Name has been updated to: " + name);
-      }, [name]);
 
 
       const changePassword=async(e) =>{
@@ -491,6 +489,14 @@ function App() {
       alert("Password updated successfully!");
     }
 
+    /*
+        Name Modal Condition
+    */
+
+    useEffect(() =>{
+      console.log("Name has been updated to: " + name);
+    }, [name]);
+
     const changeName=async(e) =>{
         e.preventDefault();
 
@@ -503,7 +509,7 @@ function App() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                   email: email,
-                  usename: newName
+                  username: newName
                 }),
             });
 
@@ -527,6 +533,78 @@ function App() {
 
 
 
+    /*
+        Image Modal Condition
+    */
+
+    const [profileImage, setProfileImage] = useState(
+      "http://res.cloudinary.com/dkeneeift/image/upload/v1730882083/user_gyjnlf.png"
+    );
+
+    useEffect(() =>{
+      fetchImages();
+      console.log("Image has been updated to: " + profileImage);
+    }, [profileImage]);
+
+
+  const changImage = async () => {
+    const fileInput = document.getElementById('upload-image');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert('Please select an image to upload.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+        const response = await fetch('http://localhost:3001/upload-profile-image', {
+            method: 'POST',
+            body: formData,
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || 'Failed to upload image');
+        }
+      console.log(data);
+      setProfileImage(data.imageUrl);
+      setImageModalOpen(false);
+        alert('Image uploaded successfully!');
+    } catch (error) {
+        console.error('Error uploading image:', error);
+        alert('Failed to upload image');
+    }
+  };
+
+  //Update the image source in the user's batabase table
+  const fetchImages = async () => {
+    try {
+            const response = await fetch('http://localhost:3001/update-Image', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  email: email,
+                  image: profileImage
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to change name');
+            }
+
+            setMessage('Name changed successfully!');
+        } catch (error) {
+            setMessage(error.message);
+        }
+  };
+
+
+
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
@@ -543,7 +621,11 @@ function App() {
           <li className="hideOnMobile"><a href="#" onClick={() => isLogin ? showPage('F_reserv'):showPage('SignIn')}>Facility Reservation</a></li>
           <li className="hideOnMobile"><a href="#" id="myPageBtn" onClick={(e) => isLogin ?showSidebar('myPageBtn',e):showPage('SignIn')}>User 🔽</a></li>
           <li className="hideOnMobile"><a href="#" id="SignIn" onClick={() => isLogin ? showPage('SignOut'):showPage('SignIn')}>{isLogin?"Sign Out":"Sign In"}</a></li>
-          <li className="ProfileIcon"><a href="#"><img src="http://res.cloudinary.com/dkeneeift/image/upload/v1730882083/user_gyjnlf.png" alt="Profile Icon"  width="40" height="40" /></a></li>
+          <li className="ProfileIcon"><a href="#"><img id='informationImg' src={isLogin ? profileImage : "http://res.cloudinary.com/dkeneeift/image/upload/v1730882083/user_gyjnlf.png"} alt="Profile Icon"  width="40" height="40" /></a></li>
+          
+          {isLogin && (
+              <li className="hideOnMobile"><a href="#"><button id="signoutBtninNav" type="button" onClick={() => SignOutBtn()}>Sign Out</button></a></li>
+          )}          
           <li className="Hamburger"><a href="#" onClick={(e) => showMenu(e)}><img src="http://res.cloudinary.com/dkeneeift/image/upload/v1730918352/Menu_ijcvu7.png" alt="Hambuger" width="30" height="30" /></a></li>
         </ul>
         </div>
@@ -678,7 +760,7 @@ function App() {
         <div id="myInfo" className="page">
           <h1>User Information</h1>
           <div id="profile_Image">
-            <img src="http://res.cloudinary.com/dkeneeift/image/upload/v1730882083/user_gyjnlf.png" alt="Profile" width="200" height="200" />
+            <img id="informationImg" src={profileImage} alt="Profile" width="200" height="200" />
           </div>
           <button onClick={() => setImageModalOpen(true)}>Change Image</button>
 
@@ -706,7 +788,7 @@ function App() {
             <input type="file" id="upload-image" accept="image/*" />
             <hr />
             <button id="closeBtn"  onClick={() => setImageModalOpen(false)}>Close</button>
-            <button id="ImageSaveBtn">Save changes</button>
+            <button id="ImageSaveBtn" onClick={changImage}>Save changes</button>
           </div>
         </div>
       )}

@@ -33,7 +33,8 @@ function SignUp({ showPage }) {
             console.log('Request Payload:', {
                 email: formData.email,
                 username: formData.username,
-                password: hashedPassword
+                password: hashedPassword,
+                image: "http://res.cloudinary.com/dkeneeift/image/upload/v1730882083/user_gyjnlf.png"
             });
 
             const response = await fetch('http://localhost:3001/register', {
@@ -44,7 +45,8 @@ function SignUp({ showPage }) {
                 body: JSON.stringify({
                     email: formData.email,
                     username: formData.username,
-                    password: hashedPassword
+                    password: hashedPassword,
+                    image:"http://res.cloudinary.com/dkeneeift/image/upload/v1730882083/user_gyjnlf.png"
                 })
             });
 

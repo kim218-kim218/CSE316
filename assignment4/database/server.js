@@ -10,10 +10,18 @@ const app = express();
 const port = 3001;
 const cloudinary = require("cloudinary").v2;
 const cors = require("cors");
+const fileUpload = require('express-fileupload');
+
 
 app.use(cors());
 app.use(express.json());
 require('dotenv').config();
+app.use(fileUpload({
+    useTempFiles: true, // Enable Temp File Path
+    tempFileDir: '/tmp/', // Set up a temporary file storage directory
+}));
+
+
 
 // MySQL 
 const db = mysql.createConnection({
@@ -64,7 +72,8 @@ db.connect(err => {
         id INT AUTO_INCREMENT PRIMARY KEY,
         email VARCHAR(255) NOT NULL UNIQUE,    
         password varchar(255) NOT NULL,
-        username VARCHAR(255) NOT NULL
+        username VARCHAR(255) NOT NULL,
+        image VARCHAR(255) NOT NULL
     );
     `;
 
@@ -262,10 +271,10 @@ app.delete('/reservations/:id', (req, res) => {
 
 
 app.post('/register', (req, res) => {
-    const { email, username, password } = req.body;
+    const { email, username, password, image } = req.body;
     console.log('Received Request Body:', req.body);
-    if (!email || !password || !username) {
-        console.error('Missing required fields:', { email, password, username });
+    if (!email || !password || !username || !image) {
+        console.error('Missing required fields:', { email, password, username, image });
         return res.status(400).json({ message: 'Missing required fields' });
     }
     else{
@@ -285,8 +294,8 @@ app.post('/register', (req, res) => {
         }
 
         // Insert new user
-        const insertQuery = 'INSERT INTO users (email, password, username) VALUES (?, ?, ?)';
-        db.query(insertQuery, [email, password, username], (err, results) => {
+        const insertQuery = 'INSERT INTO users (email, password, username, image) VALUES (?, ?, ?, ?)';
+        db.query(insertQuery, [email, password, username, image], (err, results) => {
             
             if (err) {
                 console.error('Error inserting user:', err);
@@ -317,7 +326,7 @@ app.put('/change-password', (req, res) => {
         return res.status(400).send('All fields are required' );
     }
 
-    // Check if the email exists and oldPassword is correct
+    // Check if the email exists 
     const selectQuery = 'SELECT * FROM users WHERE email = ?';
     db.query(selectQuery, [email], (err, results) => {
         if (err) {
@@ -328,7 +337,7 @@ app.put('/change-password', (req, res) => {
             return res.status(404).send('Email not found' );
         }
 
-        const user = results[0];
+        //const user = results[0];
 
         // Update the password
         const updateQuery = 'UPDATE users SET password = ? WHERE email = ?';
@@ -347,11 +356,11 @@ app.put('/change-name', (req, res) => {
     const { email, username } = req.body;
     console.log('Received Request Body:', req.body);
     if (!email || !username) {
-        //console.log(email,username);
+        console.log(email,username);
         return res.status(400).send('All fields are required' );
     }
 
-    // Check if the email exists and oldPassword is correct
+    // Check if the email exists
     const selectQuery = 'SELECT * FROM users WHERE email = ?';
     db.query(selectQuery, [email], (err, results) => {
         if (err) {
@@ -362,7 +371,7 @@ app.put('/change-name', (req, res) => {
             return res.status(404).send('Email not found' );
         }
 
-        const user = results[0];
+        //const user = results[0];
 
         // Update the Name
         const updateQuery = 'UPDATE users SET username = ? WHERE email = ?';
@@ -373,6 +382,64 @@ app.put('/change-name', (req, res) => {
             }
 
             res.status(200).send('Name updated successfully' );
+        });
+    });
+});
+
+app.post('/upload-profile-image', async (req, res) => {
+    try {
+        const file = req.files.image; // express-fileupload 또는 multer 사용
+        console.log('req.files:', req.files);
+
+        if (!file) {
+            return res.status(400).send('File dose not uploaded'); 
+        }
+
+        // Cloudinary로 파일 업로드
+        const result = await cloudinary.uploader.upload(file.tempFilePath, {
+            folder: 'CSE316_Images', 
+            use_filename: true,
+            unique_filename: false,
+        });
+
+        res.status(200).json({ imageUrl: result.secure_url }); // Return uploaded image URL
+    } catch (error) {
+        console.error('Cloudinary Upload Err:', error);
+        res.status(500).send('Fail to upload image in cloudinary'); 
+    }
+});
+
+//Update the image source in the user's batabase table
+app.put('/update-Image', (req, res) => {
+    const { email, image } = req.body;
+    console.log('Received Request Body:', req.body);
+    if (!email || !image) {
+        //console.log(email,username);
+        return res.status(400).send('All fields are required' );
+    }
+
+    // Check if the email exists
+    const selectQuery = 'SELECT * FROM users WHERE email = ?';
+    db.query(selectQuery, [email], (err, results) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).send('Database error' );
+        }
+        if (results.length === 0) {
+            return res.status(404).send('Email not found' );
+        }
+
+        //const user = results[0];
+
+        // Update the Image
+        const updateQuery = 'UPDATE users SET image = ? WHERE email = ?';
+        db.query(updateQuery, [image, email], (err, result) => {
+            if (err) {
+                console.error('Error updating image:', err);
+                return res.status(500).send('Failed to update image' );
+            }
+
+            res.status(200).send('Image updated successfully' );
         });
     });
 });

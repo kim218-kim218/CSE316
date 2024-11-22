@@ -55,6 +55,20 @@ nav .HomeIcon {
 
 nav .ProfileIcon {
   margin-left: auto;
+  border-radius: 50% ; 
+}
+
+#informationImg{
+  border-radius: 50%;
+}
+
+#signoutBtninNav{
+  background-color: transparent;
+  color: white;
+  border: 2px solid rgb(55, 55, 60);
+  height: 30px;
+  font-size: 6px;
+  width: 55px;
 }
 
 #home {

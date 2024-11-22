@@ -387,10 +387,14 @@ function App() {
 
       // Check if email exists in the fetchedUsers 
       const user = fetchedUsers.find(user => user.email === email);
+      
         if (!user) {
             alert('Wrong Email');
             return;
         }
+
+      setName(user.username);
+      console.log("name ="+name + "/" + user.username);
 
         const hashedPassword = hashutil(email, password); // hashing
         // Validate password
@@ -413,6 +417,8 @@ function App() {
         setPassword(e.target.value); 
     };
 
+
+
     function SignOutBtn(){
       setLogin(false);
       showPage('home');
@@ -427,6 +433,10 @@ function App() {
       useEffect(() => {
         console.log("Password has been updated to: " + password);
       }, [password]);
+
+      useEffect(() =>{
+        console.log("Name has been updated to: " + name);
+      }, [name]);
 
 
       const changePassword=async(e) =>{
@@ -479,8 +489,42 @@ function App() {
       setPasswordModalOpen(false);
       // Update the password
       alert("Password updated successfully!");
-      
     }
+
+    const changeName=async(e) =>{
+        e.preventDefault();
+
+        console.log("change name");
+        const newName = document.getElementById('newName').value;
+
+        try {
+            const response = await fetch('http://localhost:3001/change-name', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  email: email,
+                  usename: newName
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to change name');
+            }
+
+            setMessage('Name changed successfully!');
+        } catch (error) {
+            setMessage(error.message);
+        }
+
+      fetchRegisters();
+      setNameModalOpen(false);
+      setName(newName);
+      // Update the password
+      alert("Name updated successfully!");
+    }
+
 
 
 //-------------------------------------------------------------------------------------
@@ -692,10 +736,10 @@ function App() {
             <h2>Change your name</h2>
             <hr />
             <p>New Name</p>
-            <input type="name" id="name" value="" />
+            <input type="name" id="newName" />
             <hr />
             <button id="closeBtn" onClick={() => setNameModalOpen(false)}>Close</button>
-            <button id="NameSaveBtn">Save changes</button>
+            <button id="NameSaveBtn" onClick={changeName}>Save changes</button>
           </div>
         </div>
       )}

@@ -343,6 +343,40 @@ app.put('/change-password', (req, res) => {
     });
 });
 
+app.put('/change-name', (req, res) => {
+    const { email, username } = req.body;
+    console.log('Received Request Body:', req.body);
+    if (!email || !username) {
+        //console.log(email,username);
+        return res.status(400).send('All fields are required' );
+    }
+
+    // Check if the email exists and oldPassword is correct
+    const selectQuery = 'SELECT * FROM users WHERE email = ?';
+    db.query(selectQuery, [email], (err, results) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).send('Database error' );
+        }
+        if (results.length === 0) {
+            return res.status(404).send('Email not found' );
+        }
+
+        const user = results[0];
+
+        // Update the Name
+        const updateQuery = 'UPDATE users SET username = ? WHERE email = ?';
+        db.query(updateQuery, [username, email], (err, result) => {
+            if (err) {
+                console.error('Error updating name:', err);
+                return res.status(500).send('Failed to update name' );
+            }
+
+            res.status(200).send('Name updated successfully' );
+        });
+    });
+});
+
 
 app.get('/', (req, res) => {
     res.send('Server is open');

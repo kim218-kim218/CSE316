@@ -357,13 +357,34 @@ function App() {
             .catch(error => {console.error("Error fetching user data:", error);});
     }, []);
 
-    // Handle Sign-In Form Submission
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    async function fetchRegisters() {
+      try {
+          const response = await fetch('http://localhost:3001/register');
+          if (!response.ok) {
+              throw new Error('Failed to fetch registers');
+          }
+          const data = await response.json();
+          setUsers(data); 
+          return data;
+      } catch (error) {
+          console.error("Error fetching regiater:", error);
+           return []; 
+      }
+  }
 
-        // Check if email exists in the database
-        const user = users.find(user => user.email === email);
-        setName(user.username);
+    // Handle Sign-In Form Submission
+    const handleSubmit = async (e) => {
+
+      e.preventDefault();
+      const fetchedUsers = await fetchRegisters();
+
+      if (!Array.isArray(fetchedUsers)) {
+          alert("Cannot load users.");
+          return;
+      }
+
+      // Check if email exists in the fetchedUsers 
+      const user = fetchedUsers.find(user => user.email === email);
         if (!user) {
             alert('Wrong Email');
             return;
@@ -390,6 +411,12 @@ function App() {
         setPassword(e.target.value); 
     };
 
+    function SignOutBtn(){
+      setLogin(false);
+      showPage('home');
+      alert("User SignOut Successfully!");
+    }
+
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
@@ -405,7 +432,7 @@ function App() {
           <li className="hideOnMobile"><a href="#" onClick={() => isLogin ?  showPage('F_list'):showPage('SignIn')}>Facility List</a></li>
           <li className="hideOnMobile"><a href="#" onClick={() => isLogin ? showPage('F_reserv'):showPage('SignIn')}>Facility Reservation</a></li>
           <li className="hideOnMobile"><a href="#" id="myPageBtn" onClick={(e) => isLogin ?showSidebar('myPageBtn',e):showPage('SignIn')}>User 🔽</a></li>
-          <li className="hideOnMobile"><a href="#" id="SignIn" onClick={() => showPage('SignIn')}>Sign In</a></li>
+          <li className="hideOnMobile"><a href="#" id="SignIn" onClick={() => isLogin ? showPage('SignOut'):showPage('SignIn')}>{isLogin?"Sign Out":"Sign In"}</a></li>
           <li className="ProfileIcon"><a href="#"><img src="http://res.cloudinary.com/dkeneeift/image/upload/v1730882083/user_gyjnlf.png" alt="Profile Icon"  width="40" height="40" /></a></li>
           <li className="Hamburger"><a href="#" onClick={(e) => showMenu(e)}><img src="http://res.cloudinary.com/dkeneeift/image/upload/v1730918352/Menu_ijcvu7.png" alt="Hambuger" width="30" height="30" /></a></li>
         </ul>
@@ -640,6 +667,16 @@ function App() {
         </Router>
         </div>
       )}
+
+      {currentPage == 'SignOut' && (
+        <div id="SignOut">
+          <div className="sign-container">
+            <h1>Sign Out</h1>
+            <button type='button' onClick={() => SignOutBtn()}>Sign Out</button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

@@ -357,7 +357,6 @@ function App() {
             .then(response => {response.json();})
             .then(data => { setUsers(data); })// Store the user data locally
             .catch(error => {console.error("Error fetching user data:", error);});
-        console.log("register changed"+users);
       
     }, []);
 
@@ -443,15 +442,10 @@ function App() {
       const changePassword=async(e) =>{
         e.preventDefault();
 
-        console.log("change password");
+        //console.log("change password");
 
         const oldPassword = document.getElementById('oldPassword').value;
-        //console.log("old : "+oldPassword);
         const newPassword = document.getElementById('newPassword').value;
-        //console.log("new : "+newPassword);
-
-        //setPassword(email,oldPassword,newPassword);
-        //console.log(passwordData);
 
         const oldHashPassword = hashutil(email, oldPassword);
         const newHashPassword = hashutil(email, newPassword);
@@ -544,27 +538,14 @@ function App() {
       console.log("useeffect email  "+email);
     },[email])
 
-    //  useEffect(()=>{
-    //   //const user = users.find(user => user.email === email);
-    //   console.log("Users state updated:", JSON.stringify(users, null, 2));
-    //   //console.log(user);
-    // },[users])
-
     async function getImage(){
       const fetchedUsers = await fetchRegisters();
       const user = fetchedUsers.find(user => user.email === email);
       console.log("user ======="+user);
       return user;
     }
-    //console.log(getImage());
-    //const user = users.find(user => user.email === email);
-    //const u = users.find(user => user.email === email);
-    //console.log("Users state updated:", JSON.stringify(users, null, 2));
-    //console.log(email);
-    //console.log("u :", JSON.stringify(u, null, 2));
-    // console.log("users: "+users+"image == "+u+ "  email == "+email);
+
     const [profileImage, setProfileImage] = useState(
-      //users.find(user => user.email === email).image
       "http://res.cloudinary.com/dkeneeift/image/upload/v1730882083/user_gyjnlf.png"
     );
 
@@ -597,9 +578,9 @@ function App() {
         }
       //console.log(data);
       fetchRegisters()
-      setProfileImage(data.imageUrl);
+      await setProfileImage(data.imageUrl);
       setImageModalOpen(false);
-      fetchImages();
+      fetchImages(data.imageUrl);
         alert('Image uploaded successfully!');
     } catch (error) {
         console.error('Error uploading image:', error);
@@ -608,14 +589,14 @@ function App() {
   };
 
   //Update the image source in the user's batabase table
-  const fetchImages = async () => {
+  const fetchImages = async (img) => {
     try {
             const response = await fetch('http://localhost:3001/update-Image', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                   email: email,
-                  image: profileImage
+                  image: img
                 }),
             });
 

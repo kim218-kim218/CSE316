@@ -340,12 +340,14 @@ function App() {
 
 
 
+
+
   /*
       Sign In 
   */
     const [users, setUsers] = useState([]); // Store user data from `/register`
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [password, setPassword] = useState(''); //When login -> set password / Not password in the database table
     const [name, setName] = useState('');
     const [isLogin, setLogin] = useState(false);
 
@@ -416,6 +418,70 @@ function App() {
       showPage('home');
       alert("User SignOut Successfully!");
     }
+
+  /*
+      Modal Condition
+  */
+
+      const [message, setMessage] = useState('');
+      useEffect(() => {
+        console.log("Password has been updated to: " + password);
+      }, [password]);
+
+
+      const changePassword=async(e) =>{
+        e.preventDefault();
+
+        console.log("change password");
+
+        const oldPassword = document.getElementById('oldPassword').value;
+        //console.log("old : "+oldPassword);
+        const newPassword = document.getElementById('newPassword').value;
+        //console.log("new : "+newPassword);
+
+        //setPassword(email,oldPassword,newPassword);
+        //console.log(passwordData);
+
+        const oldHashPassword = hashutil(email, oldPassword);
+        const newHashPassword = hashutil(email, newPassword);
+        console.log(oldHashPassword);
+        console.log(password);
+        // Check if the old password is correct
+        if (oldHashPassword !== hashutil(email, password)) {
+          alert("Old password is incorrect!");
+          return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:3001/change-password', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  email: email,
+                  oldPassword: oldHashPassword,
+                  newPassword: newHashPassword,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to change password');
+            }
+
+            setMessage('Password changed successfully!');
+        } catch (error) {
+            setMessage(error.message);
+        }
+
+      fetchRegisters();
+      setPassword(newPassword);
+      setPasswordModalOpen(false);
+      // Update the password
+      alert("Password updated successfully!");
+      
+    }
+
 
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
@@ -607,11 +673,14 @@ function App() {
           <div className="modal_body">
             <h2>Change your password</h2>
             <hr />
+            <p>Original password</p>
+            <input type="password" id="oldPassword" />
+            <hr />
             <p>New Password</p>
-            <input type="password" id="password" value="******" />
+            <input type="password" id="newPassword" />
             <hr />
             <button id="closeBtn"  onClick={() => setPasswordModalOpen(false)}>Close</button>
-            <button id="PasswordSaveBtn">Save changes</button>
+            <button id="PasswordSaveBtn" onClick={changePassword}>Save changes</button>
           </div>
         </div>
       )}

@@ -310,6 +310,40 @@ app.get('/register', (req, res) => {
     });
 });
 
+app.put('/change-password', (req, res) => {
+    const { email, oldPassword, newPassword } = req.body;
+    console.log('Received Request Body:', req.body);
+    if (!email || !oldPassword || !newPassword) {
+        return res.status(400).send('All fields are required' );
+    }
+
+    // Check if the email exists and oldPassword is correct
+    const selectQuery = 'SELECT * FROM users WHERE email = ?';
+    db.query(selectQuery, [email], (err, results) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).send('Database error' );
+        }
+        if (results.length === 0) {
+            return res.status(404).send('Email not found' );
+        }
+
+        const user = results[0];
+
+        // Update the password
+        const updateQuery = 'UPDATE users SET password = ? WHERE email = ?';
+        db.query(updateQuery, [newPassword, email], (err, result) => {
+            if (err) {
+                console.error('Error updating password:', err);
+                return res.status(500).send('Failed to update password' );
+            }
+
+            res.status(200).send('Password updated successfully' );
+        });
+    });
+});
+
+
 app.get('/', (req, res) => {
     res.send('Server is open');
 });

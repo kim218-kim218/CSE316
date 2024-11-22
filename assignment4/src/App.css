@@ -58,6 +58,10 @@ nav .ProfileIcon {
   border-radius: 50% ; 
 }
 
+nav .NavSign{
+  margin-left: auto;
+}
+
 #informationImg{
   border-radius: 50%;
 }

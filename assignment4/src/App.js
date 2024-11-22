@@ -357,6 +357,8 @@ function App() {
             .then(response => {response.json();})
             .then(data => { setUsers(data); })// Store the user data locally
             .catch(error => {console.error("Error fetching user data:", error);});
+        console.log("register changed"+users);
+      
     }, []);
 
     async function fetchRegisters() {
@@ -406,6 +408,7 @@ function App() {
         // Sign-In Successful
         setLogin(true);
         showPage('home');
+        setProfileImage(user.image);
         alert("User Registered Successfully!");
     };
 
@@ -537,12 +540,35 @@ function App() {
         Image Modal Condition
     */
 
+    useEffect(()=>{
+      console.log("useeffect email  "+email);
+    },[email])
+
+    //  useEffect(()=>{
+    //   //const user = users.find(user => user.email === email);
+    //   console.log("Users state updated:", JSON.stringify(users, null, 2));
+    //   //console.log(user);
+    // },[users])
+
+    async function getImage(){
+      const fetchedUsers = await fetchRegisters();
+      const user = fetchedUsers.find(user => user.email === email);
+      console.log("user ======="+user);
+      return user;
+    }
+    //console.log(getImage());
+    //const user = users.find(user => user.email === email);
+    //const u = users.find(user => user.email === email);
+    //console.log("Users state updated:", JSON.stringify(users, null, 2));
+    //console.log(email);
+    //console.log("u :", JSON.stringify(u, null, 2));
+    // console.log("users: "+users+"image == "+u+ "  email == "+email);
     const [profileImage, setProfileImage] = useState(
+      //users.find(user => user.email === email).image
       "http://res.cloudinary.com/dkeneeift/image/upload/v1730882083/user_gyjnlf.png"
     );
 
     useEffect(() =>{
-      fetchImages();
       console.log("Image has been updated to: " + profileImage);
     }, [profileImage]);
 
@@ -569,9 +595,11 @@ function App() {
         if (!response.ok) {
             throw new Error(data.message || 'Failed to upload image');
         }
-      console.log(data);
+      //console.log(data);
+      fetchRegisters()
       setProfileImage(data.imageUrl);
       setImageModalOpen(false);
+      fetchImages();
         alert('Image uploaded successfully!');
     } catch (error) {
         console.error('Error uploading image:', error);
@@ -621,11 +649,12 @@ function App() {
           <li className="hideOnMobile"><a href="#" onClick={() => isLogin ? showPage('F_reserv'):showPage('SignIn')}>Facility Reservation</a></li>
           <li className="hideOnMobile"><a href="#" id="myPageBtn" onClick={(e) => isLogin ?showSidebar('myPageBtn',e):showPage('SignIn')}>User 🔽</a></li>
           <li className="hideOnMobile"><a href="#" id="SignIn" onClick={() => isLogin ? showPage('SignOut'):showPage('SignIn')}>{isLogin?"Sign Out":"Sign In"}</a></li>
-          <li className="ProfileIcon"><a href="#"><img id='informationImg' src={isLogin ? profileImage : "http://res.cloudinary.com/dkeneeift/image/upload/v1730882083/user_gyjnlf.png"} alt="Profile Icon"  width="40" height="40" /></a></li>
           
           {isLogin && (
-              <li className="hideOnMobile"><a href="#"><button id="signoutBtninNav" type="button" onClick={() => SignOutBtn()}>Sign Out</button></a></li>
-          )}          
+            <li className="ProfileIcon"><a href="#"><img id='informationImg' src={profileImage} alt="Profile Icon"  width="40" height="40" /></a></li>
+          )} 
+
+          <li className="hideOnMobile NavSign"><a href="#"><button id="signoutBtninNav" type="button" onClick={() =>isLogin ? SignOutBtn():showPage('SignIn')}>{isLogin?"Sign Out":"Sign In"}</button></a></li>      
           <li className="Hamburger"><a href="#" onClick={(e) => showMenu(e)}><img src="http://res.cloudinary.com/dkeneeift/image/upload/v1730918352/Menu_ijcvu7.png" alt="Hambuger" width="30" height="30" /></a></li>
         </ul>
         </div>

@@ -63,7 +63,8 @@ db.connect(err => {
         purpose TEXT,
         reservation_name VARCHAR(255),
         user_name VARCHAR(255),
-        location VARCHAR(50)
+        location VARCHAR(50),
+        email VARCHAR(255) NOT NULL
     );
     `;
 
@@ -219,14 +220,14 @@ const insertFacilitiesData = async () => {
 
 // add reservation.
 app.post('/reservations', (req, res) => {
-    const { reservation_date, user_number, is_suny_korea, purpose, reservation_name, user_name, location } = req.body;
+    const { reservation_date, user_number, is_suny_korea, purpose, reservation_name, user_name, location, email } = req.body;
 
     const insertQuery = `
-        INSERT INTO reservations (reservation_date, user_number, is_suny_korea, purpose, reservation_name, user_name, location)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO reservations (reservation_date, user_number, is_suny_korea, purpose, reservation_name, user_name, location, email)
+        VALUES (?, ?, ?, ?, ?, ?, ?,?)
     `;
 
-     db.query(insertQuery, [reservation_date, user_number, is_suny_korea, purpose, reservation_name, user_name, location], (err, result) => {
+     db.query(insertQuery, [reservation_date, user_number, is_suny_korea, purpose, reservation_name, user_name, location, email], (err, result) => {
         if (err) {
             console.error("Error adding reservation:", err);
             res.status(500).send("Failed to add reservation");

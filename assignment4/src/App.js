@@ -180,18 +180,38 @@ function App() {
         return false;
     }
 
+    //For each user
+    const userReservations = reservations.filter(
+        (reservation) => reservation.email === email
+    );
+
     // Check if there's already a reservation for the same facility
-    const existingReservation = reservations.find(reservation =>reservation.reservation_name === facilityData.facility_name);
+    const existingReservation = userReservations.find(reservation =>reservation.reservation_name === facilityData.facility_name);
     if (existingReservation) {
       console.log(existingReservation);
       alert('Cannot reserve. You already have a reservation for this facility.');
       return false;
     }
 
+    // Compare dates in UTC time
     // Check if there's already a reservation for the same date
-    const existingDateReservation = reservations.some(reservation => new Date(reservation.reservation_date).toDateString() === selectedDate.toDateString());
+    const existingDateReservation = reservations.some(reservation => {
+      const reservationDate = new Date(reservation.reservation_date);
+      const selectedUTCDate = new Date(selectedDate);
+
+      // UTC date
+      const reservationDateOnly = `${reservationDate.getUTCFullYear()}-${reservationDate.getUTCMonth() + 1}-${reservationDate.getUTCDate()}`;
+      const selectedDateOnly = `${selectedUTCDate.getUTCFullYear()}-${selectedUTCDate.getUTCMonth() + 1}-${selectedUTCDate.getUTCDate()}`;
+
+      console.log("Reservation Date (UTC):", reservationDateOnly);
+      console.log("Selected Date (UTC):", selectedDateOnly);
+
+      return reservationDateOnly === selectedDateOnly;
+    });
+
+    console.log(existingDateReservation);
     if (existingDateReservation) {
-        alert('Cannot reserve. You already have a reservation for another facility on this date.');
+        alert('Cannot reserve. This facility already reserved by another user in this day.');
         return false;
     }
 
@@ -203,6 +223,7 @@ function App() {
         reservation_name: facilityData.facility_name,
         user_name: 'Nahyun Kim', 
         location: facilityData.location,
+        email: email
     };
 
     //console.log(facilityData.img,facilityData.name,document.getElementById('purpose').value,selectedDate,peopleNum.toString(),facilityData.location,facilityData.available);
@@ -228,9 +249,6 @@ function App() {
         return false;
     }
     
-    //reservStorage.push(reservForm);
-    //localStorage.setItem('reservStorage', JSON.stringify(reservStorage));// Save form data in localStorage
-    //setReservations(reservStorage);
     alert('Reservation successful!');
     displayReservations();
 
@@ -249,9 +267,7 @@ function App() {
     }
 
     const j = Math.floor(year / 100);  // first two digits of the year
-    //console.log(j);
     const k = year % 100;  // last two digits of the year
-    //console.log(k);
 
     // cpompute days
     const d = (q + Math.floor((13 * (m + 1)) / 5) + k + Math.floor(k / 4) + Math.floor(j / 4) + (5*j)) % 7;
@@ -267,13 +283,18 @@ function App() {
 
   //Function for my Reservation page. Run this func->show what facility is reserved and save in localStorage
   function  displayReservations(){
-    //let myReservations = JSON.parse(localStorage.getItem('reservStorage')) || [];
-    if(reservations.length==0){
-      //console.log("empty??");
-      return <p  className="no-reservation">No Reservation Yet</p>;
+    const userReservations = reservations.filter(
+        (reservation) => reservation.email === email
+    );
+    //console.log("user reservation : "+userReservations);
+
+    // If no reservations exist for the logged-in user
+    if (userReservations.length == 0) {
+        return <p className="no-reservation">No reservations for your account.</p>;
     }
     else{
-      return reservations.map((reservation,idx)=>{
+
+      return userReservations.map((reservation,idx)=>{
         console.log("Reservation ID:", reservation.id); 
         const dateOnly = new Date(reservation.reservation_date).toISOString().split('T')[0]; 
         return (

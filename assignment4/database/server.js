@@ -273,7 +273,7 @@ app.delete('/reservations/:id', (req, res) => {
 
 app.post('/register', (req, res) => {
     const { email, username, password, image } = req.body;
-    console.log('Received Request Body:', req.body);
+    //console.log('Received Request Body:', req.body);
     if (!email || !password || !username || !image) {
         console.error('Missing required fields:', { email, password, username, image });
         return res.status(400).json({ message: 'Missing required fields' });
@@ -322,7 +322,7 @@ app.get('/register', (req, res) => {
 
 app.put('/change-password', (req, res) => {
     const { email, oldPassword, newPassword } = req.body;
-    console.log('Received Request Body:', req.body);
+    //console.log('Received Request Body:', req.body);
     if (!email || !oldPassword || !newPassword) {
         return res.status(400).send('All fields are required' );
     }
@@ -355,7 +355,7 @@ app.put('/change-password', (req, res) => {
 
 app.put('/change-name', (req, res) => {
     const { email, username } = req.body;
-    console.log('Received Request Body:', req.body);
+    //console.log('Received Request Body:', req.body);
     if (!email || !username) {
         console.log(email,username);
         return res.status(400).send('All fields are required' );
@@ -413,7 +413,7 @@ app.post('/upload-profile-image', async (req, res) => {
 //Update the image source in the user's batabase table
 app.put('/update-Image', (req, res) => {
     const { email, image } = req.body;
-    console.log('Received Request Body:', req.body);
+    //console.log('Received Request Body:', req.body);
     if (!email || !image) {
         //console.log(email,username);
         return res.status(400).send('All fields are required' );

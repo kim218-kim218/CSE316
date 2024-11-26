@@ -44,11 +44,12 @@ function App() {
     setCurrentPage(page);
     checkCurrentF();
     const menunav = document.querySelector('.MenuNav');
-    if(menunav.style.display=='flex'){
-        menunav.style.display = 'none';
+    if(menunav.style.display === 'flex'){
+        menunav.style.display ='none';
     }
     displayReservations();
   };
+
 
   //When click My Page -> show sidebar
   function showSidebar(id,event){
@@ -56,15 +57,13 @@ function App() {
     const sidebar = document.querySelector('.sidebar');
     const Button = document.getElementById(id);
 
-    if (sidebar.style.display == 'flex') { // Sidebar == 'flex' -> hide sidebar
-        //console.log(isSidebar);
+    if (sidebar.style.display === 'flex') { // Sidebar == 'flex' -> hide sidebar
         sidebar.style.display = 'none';
 
         document.removeEventListener('click', hideSidebar);
         window.removeEventListener('resize', hideSidebar);
     } else { // Sidebar == 'none' -> show sidebar
         sidebar.style.display = 'flex';
-        //console.log(isSidebar);
         // locate sidebar right below the "Mt Page" Btn
         const rect = Button.getBoundingClientRect();
 
@@ -80,6 +79,7 @@ function App() {
     }
   }
 
+  //hide side bar
   function hideSidebar(event){
       const sidebar = document.querySelector('.sidebar');
       sidebar.style.display = 'none';
@@ -87,9 +87,9 @@ function App() {
       window.removeEventListener('resize', hideSidebar);
   }
 
+  //show menu when click hamburger icon
   function showMenu(event){
     event.preventDefault();
-    console.log("show Hamburger Menu");
     const menunav = document.querySelector('.MenuNav');
     menunav.style.display = 'flex';
 
@@ -122,8 +122,6 @@ function App() {
     }
   }
 
-  //current Facility == facility that user want to reserv
-  //const currentFacility = facilities[selectedFacility];
   const currentFacility = facilities.find(facility => facility.facility_name === selectedFacility);
 
   function checkCurrentF(){
@@ -143,8 +141,6 @@ function App() {
 
   
   async function reserveFacility(){
-    //let reservStorage = JSON.parse(localStorage.getItem('reservStorage')) || [];
-    const facility = document.getElementById('facility').value;
     const facilityData = facilities.find(facility => facility.facility_name === selectedFacility);
 
     const selectedDate = new Date(document.getElementById('date').value);
@@ -152,12 +148,11 @@ function App() {
     const peopleNum = parseInt(document.getElementById('people').value);
     const affiliationInput = document.querySelector('input[name="affiliation"]:checked');
     
-    if(affiliationInput==null){
+    if(affiliationInput === null){
       alert('Cannot reserve. Please fill the all blank');
       return false
     }
     const affiliation=affiliationInput.value;
-    //console.log(affiliation);
 
     if (selectedDate < today.setHours(0, 0, 0, 0)) {
         alert('Cannot reserve. The selected date is in the past.');
@@ -166,7 +161,6 @@ function App() {
 
     const week = [ 'Sat','Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri']
     const dayOfWeek = getDay(selectedDate);
-    //console.log("day:"+dayOfWeek);
     if(!facilityData.available_days.includes(week[dayOfWeek])){
       alert('Cannot reserve. The selected date is not available.');
         return false;
@@ -175,7 +169,7 @@ function App() {
         alert('Cannot reserve. The number of people is not correct.');
         return false;
     }
-    if (facilityData.only_for_suny && affiliation == 'no') {
+    if (facilityData.only_for_suny && affiliation === 'no') {
         alert('Cannot reserve. This facility is only available for SUNY Korea members.');
         return false;
     }
@@ -193,20 +187,13 @@ function App() {
       return false;
     }
 
-    // Compare dates in UTC time
+    // Compare dates in Korea 
     // Check if there's already a reservation for the same date
     const existingDateReservation = reservations.some(reservation => {
       const reservationDate = new Date(reservation.reservation_date);
       const selectedUTCDate = new Date(selectedDate);
 
-      // UTC date
-      const reservationDateOnly = `${reservationDate.getUTCFullYear()}-${reservationDate.getUTCMonth() + 1}-${reservationDate.getUTCDate()}`;
-      const selectedDateOnly = `${selectedUTCDate.getUTCFullYear()}-${selectedUTCDate.getUTCMonth() + 1}-${selectedUTCDate.getUTCDate()}`;
-
-      console.log("Reservation Date (UTC):", reservationDateOnly);
-      console.log("Selected Date (UTC):", selectedDateOnly);
-
-      return reservationDateOnly === selectedDateOnly;
+      return reservationDate.toLocaleDateString('ko-KR') === selectedUTCDate.toLocaleDateString('ko-KR');
     });
 
     console.log(existingDateReservation);
@@ -226,7 +213,6 @@ function App() {
         email: email
     };
 
-    //console.log(facilityData.img,facilityData.name,document.getElementById('purpose').value,selectedDate,peopleNum.toString(),facilityData.location,facilityData.available);
     try {
         const response = await fetch('http://localhost:3001/reservations', {
             method: 'POST',
@@ -240,9 +226,7 @@ function App() {
             throw new Error('Failed to add reservation');
         }
 
-        //setReservations([...reservations, reservForm]);
         await fetchReservations();
-        //console.log("???:"+reservations); 
     } catch (error) {
         console.error("Error making reservation:", error);
         alert('Failed to make reservation.');
@@ -258,10 +242,9 @@ function App() {
   function getDay(date) {
     const q = date.getDate();           // the day (1~31)
     let m = date.getMonth() + 1;        // the month (1~12)
-    //console.log(m+"월"+q+"일");
     let year = date.getFullYear();      // the year (YYYY)
     
-    if (m == 1 || m == 2) {
+    if (m === 1 || m === 2) {
       m += 12;
       year -= 1;
     }
@@ -286,17 +269,17 @@ function App() {
     const userReservations = reservations.filter(
         (reservation) => reservation.email === email
     );
-    //console.log("user reservation : "+userReservations);
 
     // If no reservations exist for the logged-in user
-    if (userReservations.length == 0) {
+    if (userReservations.length === 0) {
         return <p className="no-reservation">No reservations for your account.</p>;
     }
     else{
 
       return userReservations.map((reservation,idx)=>{
         console.log("Reservation ID:", reservation.id); 
-        const dateOnly = new Date(reservation.reservation_date).toISOString().split('T')[0]; 
+        const date = new Date(reservation.reservation_date); // 문자열을 Date 객체로 변환
+        const korDate = date.toLocaleDateString('ko-KR'); // 한국 시간대로 날짜 포맷
         return (
         <div key={idx} className="reservedFacility">
           <img className="reservedImg" src={searchImage(reservation)} alt={reservation.reservation_name} />
@@ -304,7 +287,7 @@ function App() {
             <h2>{reservation.reservation_name}</h2>
             <p>📝 {reservation.purpose}</p>
             <p>
-              📅 {dateOnly}
+              📅 {korDate}
             </p>
             <p>
               👥 {reservation.user_name}  + {(reservation.user_number - 1)}
@@ -332,14 +315,12 @@ function App() {
           }
           const data = await response.json();
           setReservations(data); // reservations 상태 업데이트
-          //console.log(reservations); 
       } catch (error) {
           console.error("Error fetching reservations:", error);
       }
   }
 
   async function cancelReservation(reservationId) {
-    console.log(reservationId);
       try {
           const response = await fetch(`http://localhost:3001/reservations/${reservationId}`, {
               method: 'DELETE'
@@ -350,7 +331,6 @@ function App() {
           }
 
           await fetchReservations();
-          console.log(reservations); 
 
           alert('Reservation cancelled successfully');
       } catch (error) {
@@ -441,13 +421,15 @@ function App() {
     };
 
 
-
+    // When click -> sign out the user
     function SignOutBtn(){
       setLogin(false);
       showPage('home');
       
       alert("User SignOut Successfully!");
     }
+
+
 
   /*
       Password Modal Condition
@@ -459,22 +441,18 @@ function App() {
       }, [password]);
 
 
-
       const changePassword=async(e) =>{
         e.preventDefault();
-
-        //console.log("change password");
 
         const oldPassword = document.getElementById('oldPassword').value;
         const newPassword = document.getElementById('newPassword').value;
 
         const oldHashPassword = hashutil(email, oldPassword);
         const newHashPassword = hashutil(email, newPassword);
-        console.log(oldHashPassword);
-        console.log(password);
+
         // Check if the old password is correct
         if (oldHashPassword !== hashutil(email, password)) {
-          alert("Old password is incorrect!");
+          alert("Old password is incorrect!" );
           return;
         }
 
@@ -506,6 +484,8 @@ function App() {
       // Update the password
       alert("Password updated successfully!");
     }
+
+
 
     /*
         Name Modal Condition
@@ -550,21 +530,21 @@ function App() {
     }
 
 
+    
 
     /*
         Image Modal Condition
     */
 
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(()=>{
+      console.log("Image is uploading...");
+    },[isLoading])
+
     useEffect(()=>{
       console.log("useeffect email  "+email);
     },[email])
-
-    async function getImage(){
-      const fetchedUsers = await fetchRegisters();
-      const user = fetchedUsers.find(user => user.email === email);
-      console.log("user ======="+user);
-      return user;
-    }
 
     const [profileImage, setProfileImage] = useState(
       "http://res.cloudinary.com/dkeneeift/image/upload/v1730882083/user_gyjnlf.png"
@@ -576,6 +556,7 @@ function App() {
 
 
   const changImage = async () => {
+    setIsLoading(true);
     const fileInput = document.getElementById('upload-image');
     const file = fileInput.files[0];
 
@@ -597,12 +578,12 @@ function App() {
         if (!response.ok) {
             throw new Error(data.message || 'Failed to upload image');
         }
-      //console.log(data);
       fetchRegisters()
       await setProfileImage(data.imageUrl);
       setImageModalOpen(false);
       fetchImages(data.imageUrl);
-        alert('Image uploaded successfully!');
+      alert('Image uploaded successfully!');
+      setIsLoading(false);
     } catch (error) {
         console.error('Error uploading image:', error);
         alert('Failed to upload image');
@@ -676,7 +657,7 @@ function App() {
     </nav>
 
     {/* //home page */}
-    {currentPage == 'home' && (
+    {currentPage === 'home' && (
         <div id="home" className="page">
           <ul>
             <li style ={{fontSize:'25px'}}><strong>Facility Reservation</strong></li>
@@ -710,7 +691,7 @@ function App() {
       )}
 
       {/* Facility List Page */}
-      {currentPage == 'F_list' && (
+      {currentPage === 'F_list' && (
         <div id="F_list" className="page">
             <ul>
               
@@ -732,7 +713,7 @@ function App() {
       )}
 
       {/* Facility Reservation Page */}
-      {currentPage == 'F_reserv' && (
+      {currentPage === 'F_reserv' && (
         <div id="F_reserv" className="page">
           <form id="reservForm">
             <label htmlFor="facility">Select Facility:</label>
@@ -787,7 +768,7 @@ function App() {
       )}
 
       {/* My page -> My information */}
-      {currentPage == 'myInfo' && (
+      {currentPage === 'myInfo' && (
         <div id="myInfo" className="page">
           <h1>User Information</h1>
           <div id="profile_Image">
@@ -857,13 +838,13 @@ function App() {
         </div>
       )}
 
-      {currentPage =='myReserv' && (
+      {currentPage === 'myReserv' && (
         <div id="myReserv" className="page myReserv">
           {displayReservations()}
         </div>
       )}
 
-      {currentPage =='SignIn' && (
+      {currentPage === 'SignIn' && (
         <div id="SignIn">
             <div className="sign-container">
                 <h2>Sign In</h2>
@@ -883,18 +864,17 @@ function App() {
         </div>
       )}
 
-      {currentPage =='SignUp' && (
+      {currentPage === 'SignUp' && (
         <div id="SignUp">
           <Router>
             <Routes>
-                {/* <Route path="/" element={<h2>Home Page</h2>} /> */}
                 <Route path="/" element={<SignUp showPage={showPage} />} />
             </Routes>
         </Router>
         </div>
       )}
 
-      {currentPage == 'SignOut' && (
+      {currentPage === 'SignOut' && (
         <div id="SignOut">
           <div className="sign-container">
             <h1>Sign Out</h1>
@@ -902,6 +882,14 @@ function App() {
           </div>
         </div>
       )}
+
+      {isLoading && (
+        <div className="loading-overlay">
+            <div className="loading-spinner"></div>
+            <p>Uploading image, please wait...</p>
+        </div>
+      )}
+
 
     </div>
   );

@@ -28,7 +28,7 @@ const db = mysql.createConnection({
   host: process.env.MYSQL_HOST,
   user: process.env.MYSQL_USER,
   password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE 
+  //database: process.env.MYSQL_DATABASE 
 });
 
 // When connected
@@ -78,48 +78,67 @@ db.connect(err => {
     );
     `;
 
-    db.query(createUsersTable, (err,result) => {
-        if (err) {
-            console.error("users table err:", err);
-            return;
-        }
-        console.log("users table is created.");
-    })
-
-    db.query(createReservationTable, (err,result) => {
-        if (err) {
-            console.error("reserv table err:", err);
-            return;
-        }
-        console.log("reserv table is created.");
-    });
-
-
-    db.query(createFacilitiesTable, (err, result) => {
-        if (err) {
-            console.error("facilities table err:", err);
-            return;
-        }
-        console.log("facilities is created.");
+    //create database
+    db.query('CREATE DATABASE IF NOT EXISTS facility_reservation', (err) => {
         
-        db.query("SELECT COUNT(*) AS count FROM facilities", (err, result) => {
+        if (err) {
+            console.error('Error creating database:', err);
+            return;
+        }
+        console.log('Database created or already exists.');
+
+        db.query('USE facility_reservation', err => {
             if (err) {
-                console.error("Error checking facilities table:", err);
+                console.error('Error switching to database:', err);
                 return;
             }
-            
-            const count = result[0].count;
-            if (count === 0) {
-                // Insert only table is empty
-                    if (err) {
-                        console.error("Error inserting default data into facilities table:", err);
-                        return;
-                    }
-                    console.log("Default facilities data with images inserted successfully.");
-                    insertFacilitiesData();
-            } else {
-                console.log("Facilities data already exists. Skipping insertion.");
+            console.log('Use facility_reservation database.');
+
+
+        db.query(createUsersTable, (err,result) => {
+            if (err) {
+                console.error("users table err:", err);
+                return;
             }
+            console.log("users table is created.");
+        })
+
+        db.query(createReservationTable, (err,result) => {
+            if (err) {
+                console.error("reserv table err:", err);
+                return;
+            }
+            console.log("reserv table is created.");
+        });
+
+
+        db.query(createFacilitiesTable, (err, result) => {
+            if (err) {
+                console.error("facilities table err:", err);
+                return;
+            }
+            console.log("facilities is created.");
+            
+            db.query("SELECT COUNT(*) AS count FROM facilities", (err, result) => {
+                if (err) {
+                    console.error("Error checking facilities table:", err);
+                    return;
+                }
+                
+                const count = result[0].count;
+                if (count === 0) {
+                    // Insert only table is empty
+                        if (err) {
+                            console.error("Error inserting default data into facilities table:", err);
+                            return;
+                        }
+                        console.log("Default facilities data with images inserted successfully.");
+                        insertFacilitiesData();
+                } else {
+                    console.log("Facilities data already exists. Skipping insertion.");
+                }
+            });
+        });
         });
     });
 });
@@ -168,12 +187,10 @@ const fetchImagesFromFolder = async () => {
             //prefix: 'CSE316_Images/', 
             max_results: 10
         });
-        console.log("Result from Cloudinary API:", result);
         const imageUrls = {};
         result.resources.forEach(resource => {
             if (resource.asset_folder === 'CSE316_Images') { // asset_folder
                 const fileName = resource.public_id.split('/').pop(); // Only filename
-                console.log("Extracted fileName:", fileName);
 
                 // facilityImageMapping
                 Object.keys(facilityImageMapping).forEach(facility => {
@@ -184,7 +201,6 @@ const fetchImagesFromFolder = async () => {
             }
         });
 
-        console.log("Image URLs by Facility:", imageUrls);
         return imageUrls; // 각 시설에 매핑된 이미지 URL 객체 반환
     } catch (error) {
         console.error("Error fetching images from Cloudinary:", error);
@@ -273,7 +289,6 @@ app.delete('/reservations/:id', (req, res) => {
 
 app.post('/register', (req, res) => {
     const { email, username, password, image } = req.body;
-    //console.log('Received Request Body:', req.body);
     if (!email || !password || !username || !image) {
         console.error('Missing required fields:', { email, password, username, image });
         return res.status(400).json({ message: 'Missing required fields' });
@@ -322,7 +337,6 @@ app.get('/register', (req, res) => {
 
 app.put('/change-password', (req, res) => {
     const { email, oldPassword, newPassword } = req.body;
-    //console.log('Received Request Body:', req.body);
     if (!email || !oldPassword || !newPassword) {
         return res.status(400).send('All fields are required' );
     }
@@ -337,8 +351,6 @@ app.put('/change-password', (req, res) => {
         if (results.length === 0) {
             return res.status(404).send('Email not found' );
         }
-
-        //const user = results[0];
 
         // Update the password
         const updateQuery = 'UPDATE users SET password = ? WHERE email = ?';
@@ -355,7 +367,6 @@ app.put('/change-password', (req, res) => {
 
 app.put('/change-name', (req, res) => {
     const { email, username } = req.body;
-    //console.log('Received Request Body:', req.body);
     if (!email || !username) {
         console.log(email,username);
         return res.status(400).send('All fields are required' );
@@ -372,8 +383,6 @@ app.put('/change-name', (req, res) => {
             return res.status(404).send('Email not found' );
         }
 
-        //const user = results[0];
-
         // Update the Name
         const updateQuery = 'UPDATE users SET username = ? WHERE email = ?';
         db.query(updateQuery, [username, email], (err, result) => {
@@ -389,14 +398,14 @@ app.put('/change-name', (req, res) => {
 
 app.post('/upload-profile-image', async (req, res) => {
     try {
-        const file = req.files.image; // express-fileupload 또는 multer 사용
+        const file = req.files.image; 
         console.log('req.files:', req.files);
 
         if (!file) {
             return res.status(400).send('File dose not uploaded'); 
         }
 
-        // Cloudinary로 파일 업로드
+        // UPload file into Cloudinary
         const result = await cloudinary.uploader.upload(file.tempFilePath, {
             folder: 'CSE316_Images', 
             use_filename: true,
@@ -413,9 +422,7 @@ app.post('/upload-profile-image', async (req, res) => {
 //Update the image source in the user's batabase table
 app.put('/update-Image', (req, res) => {
     const { email, image } = req.body;
-    //console.log('Received Request Body:', req.body);
     if (!email || !image) {
-        //console.log(email,username);
         return res.status(400).send('All fields are required' );
     }
 
@@ -429,8 +436,6 @@ app.put('/update-Image', (req, res) => {
         if (results.length === 0) {
             return res.status(404).send('Email not found' );
         }
-
-        //const user = results[0];
 
         // Update the Image
         const updateQuery = 'UPDATE users SET image = ? WHERE email = ?';

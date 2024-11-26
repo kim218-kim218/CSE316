@@ -191,14 +191,21 @@ function App() {
     // Check if there's already a reservation for the same date
     const existingDateReservation = reservations.some(reservation => {
       const reservationDate = new Date(reservation.reservation_date);
-      const selectedUTCDate = new Date(selectedDate);
 
-      return reservationDate.toLocaleDateString('ko-KR') === selectedUTCDate.toLocaleDateString('ko-KR');
+      if(reservation.reservation_name === selectedFacility){
+        return reservationDate.toLocaleDateString('ko-KR') === selectedDate.toLocaleDateString('ko-KR');
+      }
+      else{
+        if(reservation.email === email){
+          return reservationDate.toLocaleDateString('ko-KR') === selectedDate.toLocaleDateString('ko-KR');
+        }
+      }
+      return false;
     });
 
     console.log(existingDateReservation);
     if (existingDateReservation) {
-        alert('Cannot reserve. This facility already reserved by another user in this day.');
+        alert('Cannot reserve. This facility already reserved by another user or you already have reservation on this day.');
         return false;
     }
 

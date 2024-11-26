@@ -72,7 +72,7 @@ CREATE TABLE `reservations` (
   `location` varchar(50) DEFAULT NULL,
   `email` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -81,7 +81,7 @@ CREATE TABLE `reservations` (
 
 LOCK TABLES `reservations` WRITE;
 /*!40000 ALTER TABLE `reservations` DISABLE KEYS */;
-INSERT INTO `reservations` VALUES (9,'2024-11-26',1,0,'nn','Gym','Nahyun Kim','A101','nah@naver.com');
+INSERT INTO `reservations` VALUES (1,'2024-11-27',1,0,'11','Gym','Nahyun Kim','A101','nah@naver.com'),(2,'2024-11-28',1,0,'11','Gym','Nahyun Kim','A101','nah2@naver.com');
 /*!40000 ALTER TABLE `reservations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -109,7 +109,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'nah@naver.com','4c6774c92065f8913cb9be747cd6988eaf469ec41ed97bcf77011d3fe7ce9814','111','https://res.cloudinary.com/dkeneeift/image/upload/v1732495673/CSE316_Images/tmp-1-1732495664773.jpg'),(2,'nah2@naver.com','b276e75a589f0e2a69220ef3493115456bd4f123e47def814e8e6ef2undefined53abf5','nn','http://res.cloudinary.com/dkeneeift/image/upload/v1730882083/user_gyjnlf.png');
+INSERT INTO `users` VALUES (1,'nah@naver.com','4c6774c92065f8913cb9be747cd6988eaf469ec41ed97bcf77011d3fe7ce9814','nah','https://res.cloudinary.com/dkeneeift/image/upload/v1732588063/CSE316_Images/tmp-3-1732588049486.jpg'),(2,'nah2@naver.com','b276e75a589f0e2a69220ef3493115456bd4f123e47def814e8e6ef2undefined53abf5','nn','http://res.cloudinary.com/dkeneeift/image/upload/v1730882083/user_gyjnlf.png');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -122,4 +122,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-11-25 10:31:29
+-- Dump completed on 2024-11-26 11:41:04
